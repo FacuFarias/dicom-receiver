@@ -331,7 +331,10 @@ def handle_store(event):
         
         # Log connection details from OnePACS
         remote = getattr(event.assoc, 'remote', None)
+        context = getattr(event.context, 'transfer_syntax', 'Unknown')
+        
         logger.info(f"📥 C-STORE Request: {modality} from {remote}")
+        logger.info(f"   Transfer Syntax: {str(context)[:50]}")
         
         # Validar integridad del DICOM
         is_valid, validation_msg = validate_pixel_data(ds)
@@ -339,7 +342,7 @@ def handle_store(event):
         # NO RECHAZAR - aceptar incluso truncados para poder recuperarlos
         if not is_valid:
             logger.warning(f"⚠ {validation_msg} - ACEPTANDO IGUAL (posible truncado de transmisión)")
-            logger.warning(f"  Paciente: {patient_id}, Modalidad: {modality}")
+            logger.warning(f"   Paciente: {patient_id}, Modalidad: {modality}")
         
         # Create directory structure
         patient_dir = STORAGE / str(patient_id)
@@ -351,11 +354,23 @@ def handle_store(event):
         filename = f"{modality}_{timestamp}_{sop_uid}"
         filepath = study_dir / filename
         
-        # Save DICOM file - preserve dataset without re-encoding
-        ds.save_as(str(filepath))
+        # Save DICOM file - preserve dataset exactly as received without re-encoding
+        # write_like_original=True is critical to preserve JPEG2000 compression
+        # and avoid decompression issues with small PDU fragments
+        try:
+            ds.save_as(str(filepath), write_like_original=True)
+        except Exception as save_err:
+            # Fallback if write_like_original fails
+            logger.warning(f"⚠ write_like_original falló, usando fallback: {str(save_err)[:60]}")
+            ds.save_as(str(filepath))
+        
+        # Get actual file size on disk
+        file_size_bytes = filepath.stat().st_size
+        file_size_mb = file_size_bytes / (1024 * 1024)
         
         logger.info(f"✓ DICOM guardado: {patient_id}/{study_uid}/{filename}")
-        logger.info(f"  └─ {validation_msg}")
+        logger.info(f"   └─ Tamaño: {file_size_bytes:,} bytes ({file_size_mb:.2f} MB)")
+        logger.info(f"   └─ {validation_msg}")
         
         # Si es Bone Density, extraer el pixel map
         if modality.upper() == 'BD':
@@ -373,35 +388,40 @@ def handle_release(event):
     logger.info(f"Association released")
 
 
+def handle_assoc_accept(event):
+    """Log after association is accepted."""
+    # Este handler no se usa - usar EVT_REQUESTED en su lugar
+    pass
+
+
 def handle_requested(event):
     """
     Handle association request - accept all proposed presentation contexts.
     
-    This allows clients to propose any combination of SOP classes and
-    transfer syntaxes that the server has registered support for.
+    Simple implementation to work with PACS exactly as before.
     """
     remote_addr = getattr(event.assoc, 'remote', 'Unknown')
-    local_pdu = getattr(event.assoc, 'maximum_pdu_size', 0)
+    assoc = event.assoc
     
+    # Log association details
     logger.info(f"🔗 Association requested from {remote_addr}")
-    logger.info(f"  Server PDU size: {local_pdu}")
-    logger.info(f"  Proposed contexts: {len(event.assoc.requested_contexts)}")
+    logger.info(f"   Peer Max PDU Size: {assoc.peer_max_pdu_size:,} bytes ({assoc.peer_max_pdu_size/1024:.1f} KB)")
     
-    # Log proposed transfer syntaxes for debugging
-    for i, context in enumerate(event.assoc.requested_contexts):
-        transfer_syntax = getattr(context, 'transfer_syntax', 'Unknown')
-        logger.debug(f"    [{i+1}] {context.abstract_syntax} - {transfer_syntax}")
+    # Log proposed contexts
+    proposed_contexts = len(assoc.requested_contexts) if hasattr(assoc, 'requested_contexts') else 0
+    if proposed_contexts > 0:
+        logger.info(f"   Proposed Contexts: {proposed_contexts}")
     
-    # Accept all proposed contexts
-    for context in event.assoc.requested_contexts:
-        event.assoc.add_negotiated_context(
-            context.abstract_syntax,
-            context.transfer_syntax
-        )
-    
-    # Log final negotiated PDU size
-    final_pdu = getattr(event.assoc, 'maximum_pdu_size', 0)
-    logger.info(f"  ✓ All {len(event.assoc.requested_contexts)} contexts accepted (PDU: {final_pdu})")
+    # Wait a moment and log after contexts are negotiated
+    import time
+    time.sleep(0.1)
+    logger.info(f"✓ Accepting Association")
+    logger.info(f"   Our Max PDU Size: {assoc.local_max_pdu_size:,} bytes ({assoc.local_max_pdu_size/1024:.1f} KB)")
+    logger.info(f"   Peer Max PDU Size: {assoc.peer_max_pdu_size:,} bytes ({assoc.peer_max_pdu_size/1024:.1f} KB)")
+    logger.info(f"   Negotiated PDU Size: {assoc.maximum_pdu_size:,} bytes ({assoc.maximum_pdu_size/1024:.1f} KB)")
+
+
+
 
 
 def main():
@@ -419,15 +439,16 @@ def main():
     ae = AE(ae_title="DICOM_RECEIVER")
     
     # Configure PDU and timeouts for better compatibility with PACS gateways
-    ae.maximum_pdu_size = 16777215  # 16 MB - máximo permitido por DICOM standard
-    ae.network_timeout = 300  # 5 minutos para operaciones de red
-    ae.acse_timeout = 60  # 1 minuto para establecer asociación
-    ae.dimse_timeout = 300  # 5 minutos para operaciones DIMSE (C-STORE)
+    # IMPORTANTE: Ser flexible en negociación de PDU - aceptar lo que el cliente proponga
+    ae.maximum_pdu_size = 65536  # 64 KB - Flexible, acepta negociación del cliente
+    ae.network_timeout = 600  # 10 minutos para operaciones de red
+    ae.acse_timeout = 120  # 2 minutos para establecer asociación
+    ae.dimse_timeout = 600  # 10 minutos para operaciones DIMSE (C-STORE)
     
-    # Define supported transfer syntaxes (JPEG2000Lossless first for priority negotiation)
+    # Define supported transfer syntaxes
+    # NOTE: Only uncompressed for now due to JPEG2000 issues with small PDU fragments
+    # Will add compressed back after fixing negotiation
     transfer_syntaxes = [
-        JPEG2000Lossless,
-        JPEG2000,
         ImplicitVRLittleEndian,
         ExplicitVRLittleEndian,
     ]
@@ -445,9 +466,9 @@ def main():
     
     # Event handlers
     handlers = [
-        (events.EVT_REQUESTED, handle_requested),  # Accept presentation contexts
-        (events.EVT_C_STORE, handle_store),        # Store DICOM files
-        (events.EVT_RELEASED, handle_release),     # Log disconnections
+        (events.EVT_REQUESTED, handle_requested),     # Log association request and negotiation
+        (events.EVT_C_STORE, handle_store),           # Store DICOM files
+        (events.EVT_RELEASED, handle_release),        # Log disconnections
     ]
     
     # Log configuration
@@ -456,6 +477,10 @@ def main():
     logger.info(f"Server Address: 0.0.0.0:5665")
     logger.info(f"AE Title: DICOM_RECEIVER")
     logger.info(f"Supported SOP Classes: {len(ae.supported_contexts)}")
+    logger.info(f"Maximum PDU Size: {ae.maximum_pdu_size:,} bytes ({ae.maximum_pdu_size/1024:.1f} KB)")
+    logger.info(f"Network Timeout: {ae.network_timeout} seconds")
+    logger.info(f"DIMSE Timeout: {ae.dimse_timeout} seconds")
+    logger.info(f"ACSE Timeout: {ae.acse_timeout} seconds")
     logger.info("=" * 70)
     logger.info("Starting server...")
     

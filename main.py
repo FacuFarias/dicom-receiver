@@ -104,13 +104,14 @@ def extract_and_save_pixel_map(dicom_path, patient_id, modality):
     Extrae el pixel map de un archivo DICOM y lo guarda como JPEG
     Especialmente diseñado para imágenes BD (Bone Density) de HOLOGIC
     
-    NOTA: Archivos BD de HOLOGIC contienen imágenes BMP embebidas en tags propietarios
-    (tag 0029,1000) en lugar de PixelData estándar DICOM.
+    NOTA: Archivos BD de HOLOGIC pueden tener PixelData en formato especial
+    que requiere acceso directo a los bytes en lugar de usar pixel_array.
     
     Maneja:
     - PixelData estándar (CT, MR, US, etc.)
+    - PixelData en formato especial BD (acceso directo a bytes)
     - Datos truncados/corruptos (padding con ceros)
-    - BMP embebido en tags propietarios HOLOGIC (BD)
+    - BMP embebido en tags propietarios HOLOGIC (BD) si existe
     
     Args:
         dicom_path: Ruta del archivo DICOM
@@ -137,11 +138,8 @@ def extract_and_save_pixel_map(dicom_path, patient_id, modality):
             try:
                 bmp_data = dicom_dataset[0x0029, 0x1000].value
                 if bmp_data and len(bmp_data) > 10:
-                    # Guardar BMP temporal
-                    import tempfile
-                    import io
-                    
                     # Cargar BMP con PIL
+                    import io
                     bmp_file = io.BytesIO(bmp_data)
                     image = Image.open(bmp_file)
                     
@@ -174,79 +172,50 @@ def extract_and_save_pixel_map(dicom_path, patient_id, modality):
         except:
             is_color = False
         
-        # Obtener array de píxeles con recuperación de datos parciales
+        # Obtener array de píxeles con manejo especial para BD
         pixel_array = None
         try:
+            # Primero intentar pixel_array estándar (funciona para muchos formatos)
             pixel_array = dicom_dataset.pixel_array
             
-            # Incluso si se extrae correctamente, validar si está truncado
-            rows = int(dicom_dataset.get('Rows', 0))
-            cols = int(dicom_dataset.get('Columns', 0))
-            bits_allocated = int(dicom_dataset.get('BitsAllocated', 8))
-            pixel_data = dicom_dataset.PixelData
-            bytes_per_pixel = bits_allocated // 8
-            expected_bytes = rows * cols * bytes_per_pixel
-            actual_bytes = len(pixel_data)
+        except Exception as array_error:
+            # Si pixel_array falla (ej: TransferSyntaxUID missing), usar acceso directo
+            logger.debug(f"  ℹ pixel_array falló, usando acceso directo: {str(array_error)[:60]}")
             
-            # Si está truncado, reconstruir con relleno ROJO
-            if actual_bytes < expected_bytes * 0.95:  # Menos del 95% = truncado
-                logger.info(f"  ⚠ Truncamiento detectado: {actual_bytes}/{expected_bytes} ({100*actual_bytes/expected_bytes:.1f}%)")
-                
-                # Reconstruir array con relleno ROJO
-                available_pixels = actual_bytes // bytes_per_pixel
-                pixel_array = np.frombuffer(
-                    pixel_data[:available_pixels * bytes_per_pixel],
-                    dtype=np.uint16 if bits_allocated > 8 else np.uint8
-                )
-                
-                max_val = 255 if bits_allocated <= 8 else 65535
-                padding = np.full(rows * cols - available_pixels,
-                                max_val,
-                                dtype=pixel_array.dtype)
-                pixel_array = np.concatenate([pixel_array, padding])
-                pixel_array = pixel_array.reshape(rows, cols)
-                
-                pct_faltantes = 100 * (rows * cols - available_pixels) / (rows * cols)
-                logger.info(f"  ✓ Píxeles reconstruidos con RELLENO ROJO: {pct_faltantes:.1f}%")
-            
-        except Exception as px_error:
-            # Intentar recuperación de píxeles truncados
             try:
                 rows = int(dicom_dataset.get('Rows', 0))
                 cols = int(dicom_dataset.get('Columns', 0))
+                bits_allocated = int(dicom_dataset.get('BitsAllocated', 8))
                 
-                if rows > 0 and cols > 0:
-                    pixel_data = dicom_dataset.PixelData
-                    bits_allocated = int(dicom_dataset.get('BitsAllocated', 8))
-                    bytes_per_pixel = bits_allocated // 8
-                    
-                    if len(pixel_data) > 0:
-                        # Crear array del tamaño disponible
-                        available_pixels = len(pixel_data) // bytes_per_pixel
-                        pixel_array = np.frombuffer(
-                            pixel_data[:available_pixels * bytes_per_pixel], 
-                            dtype=np.uint16 if bits_allocated > 8 else np.uint8
-                        )
-                        
-                        # Rellenar el resto con ROJO para visualizar píxeles faltantes
-                        if available_pixels < rows * cols:
-                            # Usar valor máximo para rojo (255 en uint8, 65535 en uint16)
-                            max_val = 255 if bits_allocated <= 8 else 65535
-                            padding = np.full(rows * cols - available_pixels, 
-                                            max_val, 
-                                            dtype=pixel_array.dtype)
-                            pixel_array = np.concatenate([pixel_array, padding])
-                        
-                        pixel_array = pixel_array.reshape(rows, cols)
-                        pct_faltantes = 100 * (rows * cols - available_pixels) / (rows * cols)
-                        logger.info(f"  ℹ {dicom_path.name}: Píxeles truncados recuperados ({available_pixels}/{rows*cols}, RELLENO: {pct_faltantes:.1f}%)")
-            except Exception as recovery_error:
-                logger.error(f"  ✗ Error decodificando píxeles en {dicom_path.name}: {str(px_error)[:80]}")
+                if rows == 0 or cols == 0:
+                    logger.error(f"  ✗ Dimensiones inválidas: {rows}x{cols}")
+                    return False
+                
+                pixel_data = dicom_dataset.PixelData
+                bytes_per_pixel = bits_allocated // 8
+                expected_bytes = rows * cols * bytes_per_pixel
+                
+                # Verificar truncamiento
+                if len(pixel_data) < expected_bytes:
+                    logger.warning(f"  ⚠ PixelData truncado: {len(pixel_data)}/{expected_bytes} bytes")
+                
+                # Convertir a array NumPy
+                dtype = np.uint16 if bits_allocated > 8 else np.uint8
+                available_pixels = len(pixel_data) // bytes_per_pixel
+                pixel_array = np.frombuffer(
+                    pixel_data[:available_pixels * bytes_per_pixel],
+                    dtype=dtype
+                )
+                pixel_array = pixel_array.reshape(rows, cols)
+                logger.debug(f"  ✓ Acceso directo exitoso: {rows}x{cols} ({bits_allocated} bits)")
+                
+            except Exception as direct_error:
+                logger.error(f"  ✗ Error en acceso directo: {str(direct_error)[:100]}")
                 return False
-            
-            if pixel_array is None:
-                logger.error(f"  ✗ No se pudieron recuperar píxeles en {dicom_path.name}")
-                return False
+        
+        if pixel_array is None:
+            logger.error(f"  ✗ No se pudo obtener pixel_array")
+            return False
         
         # Normalizar píxeles
         normalized = normalize_pixel_array(pixel_array, is_color=is_color)
@@ -261,7 +230,8 @@ def extract_and_save_pixel_map(dicom_path, patient_id, modality):
         
         # Guardar JPEG
         image.save(str(output_path), 'JPEG', quality=95)
-        logger.info(f"  ✓ Pixel map extraído (PixelData estándar): {output_path.relative_to(PIXEL_OUTPUT)}")
+        file_size = output_path.stat().st_size
+        logger.info(f"  ✓ Pixel map extraído: {output_path.relative_to(PIXEL_OUTPUT)} ({file_size:,} bytes)")
         
         return True
         

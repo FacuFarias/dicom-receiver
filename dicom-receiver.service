@@ -1,0 +1,31 @@
+[Unit]
+Description=DICOM Receiver Service - C-STORE Server
+Documentation=https://github.com/yourusername/DICOMReceiver
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/DICOMReceiver
+Environment="PATH=/home/ubuntu/DICOMReceiver/venv/bin"
+ExecStart=/home/ubuntu/DICOMReceiver/venv/bin/python /home/ubuntu/DICOMReceiver/main.py
+
+# Reiniciar automáticamente si falla
+Restart=on-failure
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dicom-receiver
+
+# Seguridad
+NoNewPrivileges=true
+
+# Timeout
+TimeoutStartSec=30
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,38 @@
+DICOM Receiver Service - Version History
+==========================================
+
+Version 1.0.0 (2025-12-24) - STABLE
+====================================
+
+Features:
+  ✓ C-STORE protocol server on port 5665
+  ✓ Support for multiple DICOM modalities (CT, MR, XRay, Ultrasound, etc.)
+  ✓ Support for JPEG 2000 Lossless transfer syntax
+  ✓ Secondary Capture (Bone Density) support
+  ✓ Automatic directory organization (PatientID/StudyInstanceUID structure)
+  ✓ Systemd service integration with auto-restart
+  ✓ Comprehensive logging
+
+Technical Stack:
+  - Python 3.12
+  - pynetdicom 2.1.0 (DICOM network protocol)
+  - pydicom 2.4.4 (DICOM file handling)
+  - systemd (service management)
+
+Backward Compatibility:
+  - Initial release, no breaking changes to consider
+
+Known Limitations:
+  - storescu (dcmtk) may require additional configuration for some transfer syntaxes
+  - Python-based DICOM clients work without issues
+
+Testing Status:
+  ✓ C-ECHO connectivity verified
+  ✓ C-STORE with Explicit VR Little Endian tested
+  ✓ C-STORE with JPEG 2000 Lossless tested (test_bone_density.dcm successful)
+  ✓ File saving and directory organization verified
+
+Deployment:
+  - Systemd service: dicom-receiver
+  - Storage location: /home/ubuntu/DICOMReceiver/dicom_storage/
+  - Systemd unit: /etc/systemd/system/dicom-receiver.service

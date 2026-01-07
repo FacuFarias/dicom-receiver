@@ -17,6 +17,8 @@ AE Title: DICOM_RECEIVER
 """
 
 import logging
+import sys
+import subprocess
 from pathlib import Path
 from datetime import datetime
 
@@ -57,6 +59,32 @@ STORAGE.mkdir(exist_ok=True, parents=True)
 # Pixel output directory for BD images
 PIXEL_OUTPUT = Path("./pixel_extraction")
 PIXEL_OUTPUT.mkdir(exist_ok=True, parents=True)
+
+# Logs directory for BD processing
+LOGS_DIR = Path("./logs")
+LOGS_DIR.mkdir(exist_ok=True, parents=True)
+
+
+def log_bd_processing(patient_id, step, status, details=""):
+    """
+    Registra cada paso del procesamiento BD en un archivo de log por paciente.
+    
+    Args:
+        patient_id: ID del paciente
+        step: Paso del proceso (RECEPCION, ANALISIS, PIXEL_MAP, REPORTE, BD_INSERT)
+        status: Estado (SUCCESS, ERROR, WARNING)
+        details: Detalles adicionales
+    """
+    try:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_file = LOGS_DIR / f"bd_processing_{patient_id}.txt"
+        
+        log_entry = f"[{timestamp}] [{step}] [{status}] {details}\n"
+        
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write(log_entry)
+    except Exception as e:
+        logger.error(f"Error escribiendo log BD: {e}")
 
 
 def normalize_pixel_array(pixel_array, is_color=False):
@@ -342,9 +370,59 @@ def handle_store(event):
         logger.info(f"   └─ Tamaño: {file_size_bytes:,} bytes ({file_size_mb:.2f} MB)")
         logger.info(f"   └─ {validation_msg}")
         
-        # Si es Bone Density, extraer el pixel map
+        # Si es Bone Density, procesar y generar reporte
         if modality.upper() == 'BD':
-            extract_and_save_pixel_map(filepath, patient_id, modality)
+            # Log paso 1: Recepción de BD
+            body_part = getattr(ds, 'BodyPartExamined', 'UNKNOWN')
+            log_bd_processing(patient_id, "RECEPCION", "SUCCESS", 
+                            f"BD recibido - BodyPartExamined: {body_part}, Tamaño: {file_size_mb:.2f} MB")
+            
+            # Log paso 2: Análisis
+            log_bd_processing(patient_id, "ANALISIS", "SUCCESS", 
+                            f"Iniciando procesamiento de BD - Archivo: {filename}")
+            
+            # Paso 3: Extraer pixel map
+            extraction_ok = extract_and_save_pixel_map(filepath, patient_id, modality)
+            if extraction_ok:
+                log_bd_processing(patient_id, "PIXEL_MAP", "SUCCESS", 
+                                "Pixel map extraído exitosamente como JPEG")
+            else:
+                log_bd_processing(patient_id, "PIXEL_MAP", "WARNING", 
+                                "No se pudo extraer pixel map - continuando con procesamiento")
+            
+            # Paso 4: Generar reporte automático
+            log_bd_processing(patient_id, "REPORTE", "SUCCESS", 
+                            f"Ejecutando: python3 /home/ubuntu/DICOMReceiver/extract_bd_hybrid.py {patient_id}")
+            
+            try:
+                result = subprocess.run(
+                    ['python3', '/home/ubuntu/DICOMReceiver/extract_bd_hybrid.py', str(patient_id)],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                
+                if result.returncode == 0:
+                    # Paso 5: Éxito en BD
+                    log_bd_processing(patient_id, "BD_INSERT", "SUCCESS", 
+                                    "Reporte BD generado e insertado en PostgreSQL correctamente")
+                    logger.info(f"✓ BD procesado exitosamente para paciente {patient_id}")
+                else:
+                    # Error en el script
+                    stderr_preview = result.stderr[:2000] if result.stderr else "Sin stderr"
+                    stdout_preview = result.stdout[:2000] if result.stdout else "Sin stdout"
+                    log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
+                                    f"Error ejecutando script BD:\nSTDERR: {stderr_preview}\nSTDOUT: {stdout_preview}")
+                    logger.error(f"✗ Error procesando BD para paciente {patient_id}: {result.stderr[:200]}")
+                    
+            except subprocess.TimeoutExpired:
+                log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
+                                "Timeout ejecutando script BD (>30 segundos)")
+                logger.error(f"✗ Timeout procesando BD para paciente {patient_id}")
+            except Exception as bd_error:
+                log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
+                                f"Excepción ejecutando script BD: {str(bd_error)}")
+                logger.error(f"✗ Excepción procesando BD para paciente {patient_id}: {bd_error}")
         
         return 0x0000  # Success
     

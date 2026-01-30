@@ -1,0 +1,251 @@
+<HologicHeader1>
+<Institution>
+<Name>Desert Imaging Services LP - Castellano</Name>
+<StreetAddress>122 W Castellano Dr</StreetAddress>
+<CityAddress>El Paso, TX 79912</CityAddress>
+<Phone>915-5770100</Phone>
+<Fax></Fax>
+<Email>raul@dielp.com</Email>
+</Institution>
+<GeneralData>
+<LSCForDiffTypes>0</LSCForDiffTypes>
+<ScanID>A0128260B</ScanID>
+<ReportType> 6</ReportType>
+<PixelXSizeMM> 0.241228</PixelXSizeMM>
+<PixelYSizeMM> 0.241225</PixelYSizeMM>
+<HL71Name></HL71Name>
+<HL71Value></HL71Value>
+<HL72Name></HL72Name>
+<HL72Value></HL72Value>
+<HL73Name></HL73Name>
+<HL73Value></HL73Value>
+<ImagePro>Y</ImagePro>
+<DAP>DAP: 1.8 cGy*cm<sup><small>2</small></sup></DAP>
+</GeneralData>
+<QMDATA>
+<QMPOINTSET label="L4">
+<X1> 89.736984</X1>
+<Y1> 30.635576</Y1>
+<X2> 105.570518</X2>
+<Y2> 29.752867</Y2>
+<X3> 119.320541</X3>
+<Y3> 29.629580</Y3>
+<X4> 117.237022</X4>
+<Y4> 56.687878</Y4>
+<X5> 102.763321</X5>
+<Y5> 55.964203</Y5>
+<X6> 87.565926</X6>
+<Y6> 57.411552</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="L3">
+<X1> 89.736984</X1>
+<Y1> 63.924625</Y1>
+<X2> 102.763321</X2>
+<Y2> 65.371979</Y2>
+<X3> 117.237022</X3>
+<Y3> 63.924625</Y3>
+<X4> 111.447540</X4>
+<Y4> 92.871628</Y4>
+<X5> 97.097122</X5>
+<Y5> 91.460022</Y5>
+<X6> 84.671188</X6>
+<Y6> 88.529579</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="L2">
+<X1> 78.881699</X1>
+<Y1> 95.766327</Y1>
+<X2> 92.631721</X2>
+<Y2> 98.661026</Y2>
+<X3> 107.423500</X3>
+<Y3> 101.273407</Y3>
+<X4> 100.592262</X4>
+<Y4> 126.884354</Y4>
+<X5> 86.842239</X5>
+<Y5> 122.542305</Y5>
+<X6> 72.368530</X6>
+<Y6> 120.371277</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="L1">
+<X1> 70.197479</X1>
+<Y1> 126.884354</Y1>
+<X2> 84.671188</X2>
+<Y2> 131.226410</Y2>
+<X3> 98.421204</X3>
+<Y3> 134.121109</Y3>
+<X4> 90.460670</X4>
+<Y4> 159.449722</Y4>
+<X5> 77.434334</X5>
+<Y5> 155.107681</Y5>
+<X6> 63.684311</X6>
+<Y6> 152.936646</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T12">
+<X1> 60.789570</X1>
+<Y1> 158.726059</Y1>
+<X2> 74.539589</X2>
+<Y2> 162.344421</Y2>
+<X3> 88.289612</X3>
+<Y3> 164.515457</Y3>
+<X4> 84.106537</X4>
+<Y4> 187.585510</Y4>
+<X5> 69.473793</X5>
+<Y5> 184.778351</Y5>
+<X6> 55.000084</X6>
+<Y6> 184.054672</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T11">
+<X1> 56.447456</X1>
+<Y1> 189.120407</Y1>
+<X2> 69.473793</X2>
+<Y2> 192.015106</Y2>
+<X3> 82.500130</X3>
+<Y3> 192.015106</Y3>
+<X4> 78.158020</X4>
+<Y4> 214.449036</Y4>
+<X5> 65.855370</X5>
+<Y5> 213.001678</Y5>
+<X6> 52.829029</X6>
+<Y6> 213.001678</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T10">
+<X1> 54.276402</X1>
+<Y1> 217.343735</Y1>
+<X2> 68.026421</X2>
+<Y2> 218.791077</Y2>
+<X3> 81.052757</X3>
+<Y3> 218.067398</Y3>
+<X4> 80.329071</X4>
+<Y4> 238.330307</Y4>
+<X5> 65.855370</X5>
+<Y5> 239.053986</Y5>
+<X6> 50.657974</X6>
+<Y6> 239.777649</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T9">
+<X1> 50.657974</X1>
+<Y1> 242.672348</Y1>
+<X2> 65.131683</X2>
+<Y2> 243.396027</Y2>
+<X3> 79.605385</X3>
+<Y3> 242.672348</Y3>
+<X4> 75.986961</X4>
+<Y4> 262.935242</Y4>
+<X5> 62.960625</X5>
+<Y5> 261.487915</Y5>
+<X6> 50.657974</X6>
+<Y6> 262.935242</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T8">
+<X1> 53.552715</X1>
+<Y1> 266.553619</Y1>
+<X2> 64.407997</X2>
+<Y2> 267.277313</Y2>
+<X3> 75.263275</X3>
+<Y3> 267.277313</Y3>
+<X4> 75.986961</X4>
+<Y4> 286.092865</Y4>
+<X5> 64.407997</X5>
+<Y5> 285.369171</Y5>
+<X6> 52.829029</X6>
+<Y6> 285.369171</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T7">
+<X1> 52.829029</X1>
+<Y1> 290.434906</Y1>
+<X2> 65.855370</X2>
+<Y2> 289.711243</Y2>
+<X3> 78.881699</X3>
+<Y3> 290.434906</Y3>
+<X4> 80.046745</X4>
+<Y4> 303.461060</Y4>
+<X5> 66.984665</X5>
+<Y5> 303.461060</Y5>
+<X6> 55.847057</X6>
+<Y6> 301.747437</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T6">
+<X1> 57.771538</X1>
+<Y1> 312.427490</Y1>
+<X2> 70.197479</X2>
+<Y2> 307.449280</Y2>
+<X3> 82.623413</X3>
+<Y3> 306.920410</Y3>
+<X4> 85.394867</X4>
+<Y4> 318.658234</Y4>
+<X5> 77.911438</X5>
+<Y5> 323.123566</Y5>
+<X6> 66.579048</X6>
+<Y6> 326.865234</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T5">
+<X1> 67.549309</X1>
+<Y1> 337.863342</Y1>
+<X2> 78.209808</X2>
+<Y2> 329.883209</Y2>
+<X3> 85.498451</X3>
+<Y3> 325.787750</Y3>
+<X4> 92.154617</X4>
+<Y4> 339.803833</Y4>
+<X5> 84.512146</X5>
+<Y5> 345.628998</Y5>
+<X6> 76.269287</X6>
+<Y6> 349.529694</Y6>
+</QMPOINTSET>
+<QMPOINTSET label="T4">
+<X1> 75.986961</X1>
+<Y1> 351.947296</Y1>
+<X2> 86.118553</X2>
+<Y2> 348.328918</Y2>
+<X3> 92.031326</X3>
+<Y3> 344.869568</Y3>
+<X4> 102.075378</X4>
+<Y4> 360.297272</Y4>
+<X5> 89.983559</X5>
+<Y5> 365.398743</Y5>
+<X6> 82.023018</X6>
+<Y6> 370.587769</Y6>
+</QMPOINTSET>
+</QMDATA>
+</HologicHeader1>
+<JavaScriptFile, filetype=1, filename="C:\QDR\qdrdicom\html2\PatInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\PatInfo.js
+// Written By HologicDICOMControl
+PatientTitle = "Patient Information:";
+PatientName = "ALVARADO, RACHEL";
+SSN = " ";
+PatientID = "261324";
+PostalCode = " ";
+PatientSex = "Female";
+Ethnicity = "Hispanic";
+Height = "67.0 in";
+Weight = "145.0  lb";
+DOB = "10/11/1957";
+Age = "68";
+MenopauseAge = " ";
+ReferringPhysician = "MIGUEL, MARTINEZ";
+</JavaScriptFile>
+<JavaScriptFile, filetype=2, filename="C:\QDR\qdrdicom\html2\ScanInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\ScanInfo.js
+// Written By HologicDICOMControl
+ScanTitle = "Scan Information:";
+Scan = "January 28, 2026 - A0128260B";
+ScanMode = "a SE R/L Lateral Image";
+AnalDate = "01/28/2026 14:02";
+AnalProtocol = "IDS_ANA_TITLE_IVAHD_CW_SE_LAT";
+Institution = "Desert Imaging Services LP - Castellano";
+Operator = "owh";
+Model = "Horizon W (S/N305333M)";
+Comment = " ";
+ReportDate = "01/28/2026 14:03";
+HologicSoftwareVer = "13.6.1.4";
+</JavaScriptFile>
+<JavaScriptFile, filetype=6, filename="C:\QDR\qdrdicom\html2\PComment.js">
+/ Filename = C:\QDR\qdrdicom\html2\PComment.js
+// Written By HologicDICOMControl
+PhysicianComment = " ";
+</JavaScriptFile>
+<JavaScriptFile, filetype=7, filename="C:\QDR\qdrdicom\html2\Fracture.js">
+/ Filename = C:\QDR\qdrdicom\html2\Fracture.js
+// Written By HologicDICOMControl
+FractureRiskStr = " ";
+</JavaScriptFile>

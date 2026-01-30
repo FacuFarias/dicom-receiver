@@ -1,0 +1,19 @@
+<strong>EXAM: BONE DENSITOMETRY</strong>
+
+<strong>History:</strong> Evaluate for osteoporosis.
+Technique: Bone density study was performed to evaluate the lumbar spine, the right hip and the left forearm.
+Comparison: 10/27/2021.
+
+<strong>FINDINGS:</strong>
+<strong>LUMBAR SPINE:</strong> The bone mineral density in the lumbar spine (L1-L4) is 1.162 g/cm² with a T-score of 1.0 and a Z-score of 3.2. The bone mineral density in the lumbar spine remained stable since 2021.
+<strong>LEFT FOREARM:</strong> The bone mineral density in the left forearm is 0.461 g/cm² with a T-score of -2.4 and a Z-score of -0.1.
+<strong>RIGHT HIP (FEMORAL NECK):</strong> The bone mineral density in the right femoral neck is 0.738 g/cm² with a T-score of -1.0 and a Z-score of 0.8.
+
+<strong>10-YEAR FRACTURE PROBABILITY (FRAX):</strong>
+  Major osteoporotic fracture: 8.8%
+  Hip fracture: 0.9%
+
+<strong>IMPRESSION:</strong>
+According to the World Health Organization's standards, bone mineral density in the left forearm is osteopenic. Moderately increased risk of fracture. Treatment is advised.
+Bone mineral density in the lumbar spine and the right hip is within a normal range. Low risk of fracture.
+Follow-up bone mineral density exam is recommended in [24] months.

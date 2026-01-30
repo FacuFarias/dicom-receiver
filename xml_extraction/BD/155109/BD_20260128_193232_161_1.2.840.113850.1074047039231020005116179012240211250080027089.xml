@@ -1,0 +1,356 @@
+<HologicHeader1>
+<Institution>
+<Name>Desert Imaging Services LP-Lee Trevino</Name>
+<StreetAddress>1727 N Lee Trevino</StreetAddress>
+<CityAddress>El Paso, TX 79936</CityAddress>
+<Phone>915-577-0100</Phone>
+<Fax>915-577-9444</Fax>
+<Email>raul@dielp.com</Email>
+</Institution>
+<GeneralData>
+<ScanID>A01282603</ScanID>
+<ReportType> 1</ReportType>
+<RegionForPlot> 0</RegionForPlot>
+<Range> 0</Range>
+<ROI> 1</ROI>
+<RefCurveID> 2970</RefCurveID>
+<k> 1.138490</k>
+<d0> 49.763060</d0>
+<Thickness> 6.910619</Thickness>
+<ROIWidth> 116</ROIWidth>
+<ROIHeight> 134</ROIHeight>
+<ImageXSize> 252</ImageXSize>
+<ImageYSize> 384</ImageYSize>
+<GraphXSize> 359</GraphXSize>
+<GraphYSize> 384</GraphYSize>
+<ImageXPos> 416</ImageXPos>
+<ImageYPos> 180</ImageYPos>
+<GraphXPos> 680</GraphXPos>
+<GraphYPos> 180</GraphYPos>
+<HL71Name></HL71Name>
+<HL71Value></HL71Value>
+<HL72Name></HL72Name>
+<HL72Value></HL72Value>
+<HL73Name></HL73Name>
+<HL73Value></HL73Value>
+<ImagePro></ImagePro>
+<DAP>DAP: 2.1 cGy*cm<sup><small>2</small></sup></DAP>
+</GeneralData>
+</HologicHeader1>
+<JavaScriptFile, filetype=1, filename="C:\QDR\qdrdicom\html2\PatInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\PatInfo.js
+// Written By HologicDICOMControl
+PatientTitle = "Patient Information:";
+PatientName = "STEWART, LYNN";
+SSN = "461-90-6010";
+PatientID = "155109";
+PostalCode = " ";
+PatientSex = "Female";
+Ethnicity = "White";
+Height = "63.0 in";
+Weight = "121.0  lb";
+DOB = "04/17/1951";
+Age = "74";
+MenopauseAge = "53";
+ReferringPhysician = "DELIA, PENNINGTON";
+</JavaScriptFile>
+<JavaScriptFile, filetype=2, filename="C:\QDR\qdrdicom\html2\ScanInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\ScanInfo.js
+// Written By HologicDICOMControl
+ScanTitle = "Scan Information:";
+Scan = "January 28, 2026 - A01282603";
+ScanMode = "f Lumbar Spine";
+AnalDate = "01/28/2026 07:53";
+AnalProtocol = "Spine";
+Institution = "Desert Imaging Services LP-Lee Trevino";
+Operator = "JC";
+Model = "Horizon Ci (S/N303693M)";
+Comment = " ";
+ReportDate = "01/28/2026 07:57";
+HologicSoftwareVer = "13.6.0.7";
+</JavaScriptFile>
+<JavaScriptFile, filetype=6, filename="C:\QDR\qdrdicom\html2\PComment.js">
+/ Filename = C:\QDR\qdrdicom\html2\PComment.js
+// Written By HologicDICOMControl
+PhysicianComment = " ";
+</JavaScriptFile>
+<JavaScriptFile, filetype=3, filename="C:\QDR\qdrdicom\html2\Results.js">
+/ Filename = C:\QDR\qdrdicom\html2\Results.js
+// Written By HologicDICOMControl
+IncludeTable1 = true;
+MAXROWS1 = 6;
+MAXCOLS1 = 8;
+TableTitle1 = "Results Summary:";
+TableType1 = 1;
+TableNote1 = "Total BMD CV 1.0%, ACF = 1.035, BCF = 1.022, TH = 6.911";
+TableRowTypes1[ 0] = 1;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 0][ 0] = "Region";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 0][ 1] = "Area[cm<sup><small>2</small></sup>]";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 0][ 2] = "BMC[(g)]";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 0][ 3] = "BMD[g/cm<sup><small>2</small></sup>]";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 0][ 4] = "T-score";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 0][ 5] = "PR (Peak Reference)";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 0][ 6] = "Z-score";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 0][ 7] = "AM (Age Matched)";
+TableRowTypes1[ 1] = 5;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 1][ 0] = "L1";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 1][ 1] = "15.54";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 1][ 2] = "11.11";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 1][ 3] = "0.715";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 1][ 4] = "-2.5";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 1][ 5] = "72";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 1][ 6] = "-0.4";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 1][ 7] = "95";
+TableRowTypes1[ 2] = 6;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 2][ 0] = "L2";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 2][ 1] = "15.36";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 2][ 2] = "11.67";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 2][ 3] = "0.760";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 2][ 4] = "-2.4";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 2][ 5] = "74";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 2][ 6] = "-0.1";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 2][ 7] = "99";
+TableRowTypes1[ 3] = 7;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 3][ 0] = "L3";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 3][ 1] = "15.42";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 3][ 2] = "13.84";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 3][ 3] = "0.897";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 3][ 4] = "-1.7";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 3][ 5] = "83";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 3][ 6] = "0.8";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 3][ 7] = "111";
+TableRowTypes1[ 4] = 8;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 4][ 0] = "L4";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 4][ 1] = "17.44";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 4][ 2] = "18.19";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 4][ 3] = "1.043";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 4][ 4] = "-0.2";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 4][ 5] = "98";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 4][ 6] = "2.4";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 4][ 7] = "134";
+TableRowTypes1[ 5] = 3;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 5][ 0] = "Total";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 5][ 1] = "63.76";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 5][ 2] = "54.81";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 5][ 3] = "0.860";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 5][ 4] = "-1.7";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 5][ 5] = "82";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 5][ 6] = "0.7";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 5][ 7] = "110";
+IncludeTable2 = true;
+MAXROWS2 = 11;
+MAXCOLS2 = 6;
+TableTitle2 = "Results History: L1-L4";
+TableType2 = 2;
+TableNote2 = " ";
+TableRowTypes2[ 0] = 1;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 0][ 0] = "Scan Date";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 0][ 1] = "Age";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 0][ 2] = "BMD";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 0][ 3] = "T-score";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 0][ 4] = "BMD Change vs Baseline";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 0][ 5] = "BMD Change vs Previous";
+TableRowTypes2[ 1] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 1][ 0] = "01/28/2026";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 1][ 1] = "74";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 1][ 2] = "0.860";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 1][ 3] = "-1.7";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 1][ 4] = "-2.3%#";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 1][ 5] = "2.6%#";
+TableRowTypes2[ 2] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 2][ 0] = "10/18/2023";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 2][ 1] = "72";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 2][ 2] = "0.838";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 2][ 3] = "-1.9";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 2][ 4] = "-4.8%#";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 2][ 5] = "7.9%*";
+TableRowTypes2[ 3] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 3][ 0] = "08/25/2021";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 3][ 1] = "70";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 3][ 2] = "0.776";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 3][ 3] = "-2.5";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 3][ 4] = "-11.8%#";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 3][ 5] = "1.6%";
+TableRowTypes2[ 4] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 4][ 0] = "08/21/2019";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 4][ 1] = "68";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 4][ 2] = "0.764";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 4][ 3] = "-2.6";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 4][ 4] = "-13.2%#";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 4][ 5] = "-3.3%*";
+TableRowTypes2[ 5] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 5][ 0] = "07/21/2017";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 5][ 1] = "66";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 5][ 2] = "0.790";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 5][ 3] = "-2.3";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 5][ 4] = "-10.2%#";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 5][ 5] = "0.7%";
+TableRowTypes2[ 6] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 6][ 0] = "07/23/2015";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 6][ 1] = "64";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 6][ 2] = "0.784";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 6][ 3] = "-2.4";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 6][ 4] = "-10.9%#";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 6][ 5] = "-6.4%#";
+TableRowTypes2[ 7] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 7][ 0] = "06/07/2012";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 7][ 1] = "61";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 7][ 2] = "0.838";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 7][ 3] = "-1.9";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 7][ 4] = "-4.8%*";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 7][ 5] = "3.5%*";
+TableRowTypes2[ 8] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 8][ 0] = "03/31/2011";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 8][ 1] = "59";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 8][ 2] = "0.809";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 8][ 3] = "-2.2";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 8][ 4] = "-8.0%*";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 8][ 5] = "-0.2%";
+TableRowTypes2[ 9] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 9][ 0] = "03/15/2010";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 9][ 1] = "58";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 9][ 2] = "0.811";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 9][ 3] = "-2.1";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 9][ 4] = "-7.8%*";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 9][ 5] = "-7.8%*";
+TableRowTypes2[ 10] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 10][ 0] = "01/29/2008";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 10][ 1] = "56";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 10][ 2] = "0.880";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 10][ 3] = "-1.5";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 10][ 4] = " ";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 10][ 5] = " ";
+</JavaScriptFile>
+<JavaScriptFile, filetype=4, filename="C:\QDR\qdrdicom\html2\Image.js">
+/ Filename = C:\QDR\qdrdicom\html2\Image.js
+// Written By HologicDICOMControl
+ImageTitle1 = "Image not for diagnostic use";
+ImageTitle2 = "116 x 134";
+ImageTitle5 = "k = 1.138, d0 = 49.8";
+ImageTitle6 = "DAP: 2.1 cGy*cm<sup><small>2</small></sup>";
+</JavaScriptFile>
+<JavaScriptFile, filetype=5, filename="C:\QDR\qdrdicom\html2\Graph.js">
+/ Filename = C:\QDR\qdrdicom\html2\Graph.js
+// Written By HologicDICOMControl
+GraphTitle2 = "T-score vs. White Female. Source:2012 BMDCS/Hologic<br> Z-score vs. White Female. Source:2012 BMDCS/Hologic";
+</JavaScriptFile>
+<JavaScriptFile, filetype=7, filename="C:\QDR\qdrdicom\html2\Fracture.js">
+/ Filename = C:\QDR\qdrdicom\html2\Fracture.js
+// Written By HologicDICOMControl
+FractureRiskStr = "Fracture Risk: Increased; WHO Classification: Osteopenia<BR>* Denotes significance at 95% confidence level, LSC is 0.022 g/cm²<BR># Denotes dissimilar scan types or analysis methods.";
+</JavaScriptFile>
+ 

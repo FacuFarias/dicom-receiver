@@ -1,0 +1,22 @@
+<strong>EXAM: BONE DENSITOMETRY</strong>
+
+<strong>History:</strong> Evaluate for osteoporosis.
+Technique: Bone density study was performed to evaluate the lumbar spine.
+Comparison: [None available].
+
+<strong>FINDINGS:</strong>
+
+<strong>LUMBAR SPINE:</strong>
+  The bone mineral density in the lumbar spine (L1-L4) is 0.857 g/cm² 
+  with a T-score of -1.7 
+  and a Z-score of 0.1.
+
+<strong>10-YEAR FRACTURE PROBABILITY (FRAX):</strong>
+  FRAX not reported (all T-scores at or above -1.0)
+
+<strong>WHO CLASSIFICATION:</strong>
+  Lumbar spine: Osteopenia
+
+<strong>IMPRESSION:</strong>
+Bone mineral density in the lumbar spine is osteopenic. Moderately increased risk of fracture. Treatment is advised.
+Follow-up bone mineral density exam is recommended in [24] months.

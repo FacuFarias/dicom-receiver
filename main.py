@@ -60,6 +60,10 @@ STORAGE.mkdir(exist_ok=True, parents=True)
 PIXEL_OUTPUT = Path("./pixel_extraction")
 PIXEL_OUTPUT.mkdir(exist_ok=True, parents=True)
 
+# XML extraction directory for BD XML data
+XML_OUTPUT = Path("./xml_extraction")
+XML_OUTPUT.mkdir(exist_ok=True, parents=True)
+
 # Logs directory for BD processing
 LOGS_DIR = Path("./logs")
 LOGS_DIR.mkdir(exist_ok=True, parents=True)
@@ -67,7 +71,7 @@ LOGS_DIR.mkdir(exist_ok=True, parents=True)
 
 def log_bd_processing(patient_id, step, status, details=""):
     """
-    Registra cada paso del procesamiento BD en un archivo de log por paciente.
+    Registra cada paso del procesamiento BD en un archivo de log centralizado.
     
     Args:
         patient_id: ID del paciente
@@ -77,14 +81,65 @@ def log_bd_processing(patient_id, step, status, details=""):
     """
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_file = LOGS_DIR / f"bd_processing_{patient_id}.txt"
+        log_file = LOGS_DIR / "bd_processing.log"
         
-        log_entry = f"[{timestamp}] [{step}] [{status}] {details}\n"
+        log_entry = f"[{timestamp}] [Patient: {patient_id}] [{step}] [{status}] {details}\n"
         
         with open(log_file, 'a', encoding='utf-8') as f:
             f.write(log_entry)
     except Exception as e:
         logger.error(f"Error escribiendo log BD: {e}")
+
+
+def extract_and_save_xml(dicom_path, patient_id, modality):
+    """
+    Extrae el XML embebido del tag (0x0019, 0x1000) de DICOM y lo guarda en archivo.
+    Estructura de carpetas: xml_extraction/{modality}/{patient_id}/
+    
+    Args:
+        dicom_path: Ruta del archivo DICOM
+        patient_id: ID del paciente
+        modality: Modalidad DICOM (ej: BD)
+        
+    Returns:
+        bool: True si se extrajo exitosamente, False en caso contrario
+    """
+    try:
+        # Leer DICOM
+        ds = pydicom.dcmread(str(dicom_path), stop_before_pixels=True, force=True)
+        
+        # Verificar si tiene XML en tag (0x0019, 0x1000)
+        if (0x0019, 0x1000) not in ds:
+            logger.debug(f"No se encontró XML en tag (0x0019, 0x1000) para {dicom_path}")
+            return False
+        
+        # Extraer XML
+        xml_data = ds[0x0019, 0x1000].value
+        if isinstance(xml_data, bytes):
+            xml_text = xml_data.decode('utf-8', errors='ignore')
+        else:
+            xml_text = str(xml_data)
+        
+        # Crear directorio de salida
+        output_dir = XML_OUTPUT / modality / str(patient_id)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Generar nombre de archivo
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]
+        sop_instance_uid = getattr(ds, 'SOPInstanceUID', 'unknown')
+        output_filename = f"BD_{timestamp}_{sop_instance_uid}.xml"
+        output_path = output_dir / output_filename
+        
+        # Guardar XML
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(xml_text)
+        
+        logger.debug(f"XML guardado: {output_path}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error extrayendo XML de {dicom_path}: {e}")
+        return False
 
 
 def normalize_pixel_array(pixel_array, is_color=False):
@@ -370,59 +425,154 @@ def handle_store(event):
         logger.info(f"   └─ Tamaño: {file_size_bytes:,} bytes ({file_size_mb:.2f} MB)")
         logger.info(f"   └─ {validation_msg}")
         
-        # Si es Bone Density, procesar y generar reporte
+        # Si es Bone Density, procesar según fabricante del equipo
         if modality.upper() == 'BD':
-            # Log paso 1: Recepción de BD
+            # Detectar fabricante del equipo
+            manufacturer = getattr(ds, 'Manufacturer', 'UNKNOWN').strip().upper()
+            model = getattr(ds, 'ManufacturerModelName', 'UNKNOWN').strip()
             body_part = getattr(ds, 'BodyPartExamined', 'UNKNOWN')
+            series_description = getattr(ds, 'SeriesDescription', 'UNKNOWN')
+            
+            # Log paso 1: Recepción de BD con información de equipo
             log_bd_processing(patient_id, "RECEPCION", "SUCCESS", 
-                            f"BD recibido - BodyPartExamined: {body_part}, Tamaño: {file_size_mb:.2f} MB")
+                            f"BD recibido - Fabricante: {manufacturer}, Modelo: {model}, BodyPart: {body_part}, Series: {series_description}, Tamaño: {file_size_mb:.2f} MB")
             
-            # Log paso 2: Análisis
-            log_bd_processing(patient_id, "ANALISIS", "SUCCESS", 
-                            f"Iniciando procesamiento de BD - Archivo: {filename}")
+            # Determinar script de procesamiento según fabricante
+            extraction_script = None
             
-            # Paso 3: Extraer pixel map
-            extraction_ok = extract_and_save_pixel_map(filepath, patient_id, modality)
-            if extraction_ok:
-                log_bd_processing(patient_id, "PIXEL_MAP", "SUCCESS", 
-                                "Pixel map extraído exitosamente como JPEG")
-            else:
-                log_bd_processing(patient_id, "PIXEL_MAP", "WARNING", 
-                                "No se pudo extraer pixel map - continuando con procesamiento")
-            
-            # Paso 4: Generar reporte automático
-            log_bd_processing(patient_id, "REPORTE", "SUCCESS", 
-                            f"Ejecutando: python3 /home/ubuntu/DICOMReceiver/extract_bd_hybrid.py {patient_id}")
-            
-            try:
-                result = subprocess.run(
-                    ['python3', '/home/ubuntu/DICOMReceiver/extract_bd_hybrid.py', str(patient_id)],
-                    capture_output=True,
-                    text=True,
-                    timeout=30
-                )
+            if 'HOLOGIC' in manufacturer:
+                # Equipos HOLOGIC: usan XML estructurado en tag (0x0019, 0x1000)
+                extraction_script = '/home/ubuntu/DICOMReceiver/algorithms/bd_extracts/bd_extract_hologic.py'
+                log_bd_processing(patient_id, "DETECCION", "INFO", 
+                                f"Equipo HOLOGIC detectado - Modelo: {model}")
                 
-                if result.returncode == 0:
-                    # Paso 5: Éxito en BD
-                    log_bd_processing(patient_id, "BD_INSERT", "SUCCESS", 
-                                    "Reporte BD generado e insertado en PostgreSQL correctamente")
-                    logger.info(f"✓ BD procesado exitosamente para paciente {patient_id}")
+                # Extraer y guardar XML siempre (para HOLOGIC BD)
+                xml_extracted = extract_and_save_xml(filepath, patient_id, modality)
+                if xml_extracted:
+                    log_bd_processing(patient_id, "XML_EXTRACTION", "SUCCESS", 
+                                    "XML extraído y guardado exitosamente")
                 else:
-                    # Error en el script
-                    stderr_preview = result.stderr[:2000] if result.stderr else "Sin stderr"
-                    stdout_preview = result.stdout[:2000] if result.stdout else "Sin stdout"
-                    log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
-                                    f"Error ejecutando script BD:\nSTDERR: {stderr_preview}\nSTDOUT: {stdout_preview}")
-                    logger.error(f"✗ Error procesando BD para paciente {patient_id}: {result.stderr[:200]}")
+                    log_bd_processing(patient_id, "XML_EXTRACTION", "WARNING", 
+                                    "No se pudo extraer XML del DICOM")
+                
+                # Para HOLOGIC, detectar si es HIP antes de procesar
+                is_hip = body_part == 'HIP'
+                needs_pixel_extraction = False
+                
+                # Si no es HIP según el tag, buscar en el XML
+                if not is_hip and (0x0019, 0x1000) in ds:
+                    try:
+                        xml_data = ds[0x0019, 0x1000].value
+                        if isinstance(xml_data, bytes):
+                            xml_text = xml_data.decode('utf-8', errors='ignore')
+                        else:
+                            xml_text = str(xml_data)
+                        
+                        # Buscar ScanMode con "Hip"
+                        import re
+                        scan_mode_match = re.search(r'ScanMode\s*=\s*"([^"]*[Hh]ip[^"]*)"', xml_text)
+                        if scan_mode_match:
+                            is_hip = True
+                            scan_mode = scan_mode_match.group(1)
+                            log_bd_processing(patient_id, "DETECCION", "INFO", 
+                                            f"HIP detectado en ScanMode XML: '{scan_mode}' (BodyPartExamined: '{body_part}')")
+                    except Exception as xml_err:
+                        logger.debug(f"Error buscando Hip en XML: {xml_err}")
+                
+                # Si es HIP, verificar si necesita extracción de píxeles para FRAX
+                if is_hip and (0x0019, 0x1000) in ds:
+                    try:
+                        xml_data = ds[0x0019, 0x1000].value
+                        if isinstance(xml_data, bytes):
+                            xml_text = xml_data.decode('utf-8', errors='ignore')
+                        else:
+                            xml_text = str(xml_data)
+                        
+                        # Buscar FRAX Major en XML (puede estar en ResultsTable2 o ResultsTable3)
+                        import re
+                        # Intentar ResultsTable2[1][2], ResultsTable2[1][1], o ResultsTable3[1][1]
+                        frax_match = re.search(r'ResultsTable2\[\s*1\]\[\s*2\]\s*=', xml_text)
+                        if not frax_match:
+                            frax_match = re.search(r'ResultsTable2\[\s*1\]\[\s*1\]\s*=', xml_text)
+                        if not frax_match:
+                            frax_match = re.search(r'ResultsTable3\[\s*1\]\[\s*1\]\s*=', xml_text)
+                        
+                        if frax_match:
+                            log_bd_processing(patient_id, "PIXEL_MAP", "INFO", 
+                                            "FRAX encontrado en XML - pixel extraction no necesaria")
+                            needs_pixel_extraction = False
+                        else:
+                            log_bd_processing(patient_id, "PIXEL_MAP", "INFO", 
+                                            "FRAX no encontrado en XML - se requiere pixel extraction para OCR")
+                            needs_pixel_extraction = True
+                    except Exception as xml_err:
+                        logger.debug(f"Error verificando FRAX en XML: {xml_err}")
+                        # Si hay error leyendo XML, extraer píxeles por seguridad
+                        needs_pixel_extraction = True
+                
+                # Extraer píxeles solo si es necesario
+                if needs_pixel_extraction:
+                    extraction_ok = extract_and_save_pixel_map(filepath, patient_id, modality)
+                    if extraction_ok:
+                        log_bd_processing(patient_id, "PIXEL_MAP", "SUCCESS", 
+                                        "Pixel map extraído para OCR de FRAX")
+                    else:
+                        log_bd_processing(patient_id, "PIXEL_MAP", "WARNING", 
+                                        "No se pudo extraer pixel map - FRAX podría no estar disponible")
+                
+                # HOLOGIC: procesar todos los archivos (HIP, LSPINE, FOREARM)
+                # El script de extracción consolidará los datos en el mismo registro por ACC
+                log_bd_processing(patient_id, "ANALISIS", "INFO", 
+                                f"HOLOGIC BD {body_part} recibido - será procesado y consolidado por ACC")
+                
+            elif 'GE' in manufacturer and 'LUNAR' in model.upper():
+                # Equipos GE Lunar: son reportes encapsulados (DXA Reports)
+                extraction_script = '/home/ubuntu/DICOMReceiver/algorithms/bd_extracts/bd_extract_ge.py'
+                log_bd_processing(patient_id, "DETECCION", "INFO", 
+                                f"Equipo GE Lunar detectado - Modelo: {model} - Series: {series_description}")
+                log_bd_processing(patient_id, "DETECCION", "WARNING", 
+                                f"GE Lunar usa reportes encapsulados - requiere OCR (pendiente implementación)")
+                # Por ahora, no procesar GE Lunar (pendiente OCR)
+                extraction_script = None
+                
+            else:
+                # Fabricante desconocido o no soportado
+                log_bd_processing(patient_id, "DETECCION", "WARNING", 
+                                f"Fabricante no reconocido o no soportado - Manufacturer: {manufacturer}, Model: {model}")
+                extraction_script = None
+            
+            # Ejecutar script de extracción si se determinó uno
+            if extraction_script:
+                log_bd_processing(patient_id, "ANALISIS", "SUCCESS", 
+                                f"Iniciando procesamiento con: {extraction_script}")
+                
+                try:
+                    result = subprocess.run(
+                        ['python3', extraction_script, str(patient_id)],
+                        capture_output=True,
+                        text=True,
+                        timeout=30
+                    )
                     
-            except subprocess.TimeoutExpired:
-                log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
-                                "Timeout ejecutando script BD (>30 segundos)")
-                logger.error(f"✗ Timeout procesando BD para paciente {patient_id}")
-            except Exception as bd_error:
-                log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
-                                f"Excepción ejecutando script BD: {str(bd_error)}")
-                logger.error(f"✗ Excepción procesando BD para paciente {patient_id}: {bd_error}")
+                    if result.returncode == 0:
+                        log_bd_processing(patient_id, "BD_INSERT", "SUCCESS", 
+                                        f"Reporte BD generado e insertado correctamente ({manufacturer})")
+                        logger.info(f"✓ BD procesado exitosamente para paciente {patient_id} ({manufacturer})")
+                    else:
+                        stderr_preview = result.stderr[:2000] if result.stderr else "Sin stderr"
+                        stdout_preview = result.stdout[:2000] if result.stdout else "Sin stdout"
+                        log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
+                                        f"Error ejecutando {extraction_script}:\nSTDERR: {stderr_preview}\nSTDOUT: {stdout_preview}")
+                        logger.error(f"✗ Error procesando BD para paciente {patient_id}: {result.stderr[:200]}")
+                        
+                except subprocess.TimeoutExpired:
+                    log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
+                                    f"Timeout ejecutando {extraction_script} (>30 segundos)")
+                    logger.error(f"✗ Timeout procesando BD para paciente {patient_id}")
+                except Exception as bd_error:
+                    log_bd_processing(patient_id, "BD_INSERT", "ERROR", 
+                                    f"Excepción ejecutando {extraction_script}: {str(bd_error)}")
+                    logger.error(f"✗ Excepción procesando BD para paciente {patient_id}: {bd_error}")
         
         return 0x0000  # Success
     

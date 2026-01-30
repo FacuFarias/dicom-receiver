@@ -1,0 +1,206 @@
+<HologicHeader1>
+<Institution>
+<Name>Memorial Women's Center </Name>
+<StreetAddress>1241 Campbell Rd</StreetAddress>
+<CityAddress>Houston , TX 77055</CityAddress>
+<Phone>713-461-3399</Phone>
+<Fax>713-461-1969</Fax>
+<Email>www.memorialdiagnostic.com</Email>
+</Institution>
+<GeneralData>
+<LSCForDiffTypes>0</LSCForDiffTypes>
+<ScanID>A0129260F</ScanID>
+<ReportType> 0</ReportType>
+<RegionForPlot> 0</RegionForPlot>
+<Range> 0</Range>
+<ROI> 1</ROI>
+<RefCurveID> 3753</RefCurveID>
+<k> 1.139517</k>
+<d0> 43.729004</d0>
+<Thickness> 9.695821</Thickness>
+<ROIWidth> 114</ROIWidth>
+<ROIHeight> 130</ROIHeight>
+<ImageXSize> 252</ImageXSize>
+<ImageYSize> 402</ImageYSize>
+<GraphXSize> 359</GraphXSize>
+<GraphYSize> 402</GraphYSize>
+<ImageXPos> 416</ImageXPos>
+<ImageYPos> 180</ImageYPos>
+<GraphXPos> 680</GraphXPos>
+<GraphYPos> 180</GraphYPos>
+<HL71Name></HL71Name>
+<HL71Value></HL71Value>
+<HL72Name></HL72Name>
+<HL72Value></HL72Value>
+<HL73Name></HL73Name>
+<HL73Value></HL73Value>
+<ImagePro></ImagePro>
+</GeneralData>
+</HologicHeader1>
+<JavaScriptFile, filetype=1, filename="C:\QDR\qdrdicom\html2\PatInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\PatInfo.js
+// Written By HologicDICOMControl
+PatientTitle = "Patient Information:";
+PatientName = "WATERS, CINDY";
+SSN = " ";
+PatientID = "MMD1855729000";
+PostalCode = " ";
+PatientSex = "Female";
+Ethnicity = "White";
+Height = "63.0 in";
+Weight = "246.0  lb";
+DOB = "09/03/1961";
+Age = "64";
+MenopauseAge = "50";
+ReferringPhysician = "BOHAC, CHELSEA";
+</JavaScriptFile>
+<JavaScriptFile, filetype=2, filename="C:\QDR\qdrdicom\html2\ScanInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\ScanInfo.js
+// Written By HologicDICOMControl
+ScanTitle = "Scan Information:";
+Scan = "January 29, 2026 - A0129260F";
+ScanMode = "f Lumbar Spine";
+AnalDate = "01/29/2026 10:29";
+AnalProtocol = "Spine";
+Institution = "Memorial Women's Center ";
+Operator = "SMH";
+Model = "Horizon Ci (S/N306570M)";
+Comment = " ";
+ReportDate = "01/29/2026 10:35";
+HologicSoftwareVer = "13.6.1.4";
+ResultType = "0";
+</JavaScriptFile>
+<JavaScriptFile, filetype=6, filename="C:\QDR\qdrdicom\html2\PComment.js">
+/ Filename = C:\QDR\qdrdicom\html2\PComment.js
+// Written By HologicDICOMControl
+PhysicianComment = " ";
+</JavaScriptFile>
+<JavaScriptFile, filetype=3, filename="C:\QDR\qdrdicom\html2\Results.js">
+/ Filename = C:\QDR\qdrdicom\html2\Results.js
+// Written By HologicDICOMControl
+IncludeTable1 = true;
+MAXROWS1 = 6;
+MAXCOLS1 = 8;
+TableTitle1 = "Results Summary:";
+TableType1 = 1;
+TableNote1 = "Total BMD CV 1.0%, ACF = 1.018, BCF = 1.004, TH = 9.696";
+TableRowTypes1[ 0] = 1;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 0][ 0] = "Region";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 0][ 1] = "Area[cm<sup><small>2</small></sup>]";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 0][ 2] = "BMC[(g)]";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 0][ 3] = "BMD[g/cm<sup><small>2</small></sup>]";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 0][ 4] = "T-score";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 0][ 5] = "PR (Peak Reference)";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 0][ 6] = "Z-score";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 0][ 7] = "AM (Age Matched)";
+TableRowTypes1[ 1] = 5;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 1][ 0] = "L1";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 1][ 1] = "14.03";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 1][ 2] = "15.12";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 1][ 3] = "1.078";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 1][ 4] = "0.8";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 1][ 5] = "109";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 1][ 6] = "2.3";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 1][ 7] = "131";
+TableRowTypes1[ 2] = 6;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 2][ 0] = "L2";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 2][ 1] = "15.32";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 2][ 2] = "18.24";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 2][ 3] = "1.190";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 2][ 4] = "1.5";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 2][ 5] = "116";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 2][ 6] = "3.2";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 2][ 7] = "141";
+TableRowTypes1[ 3] = 7;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 3][ 0] = "L3";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 3][ 1] = "14.53";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 3][ 2] = "18.13";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 3][ 3] = "1.248";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 3][ 4] = "1.5";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 3][ 5] = "115";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 3][ 6] = "3.3";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 3][ 7] = "141";
+TableRowTypes1[ 4] = 8;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 4][ 0] = "L4";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 4][ 1] = "15.27";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 4][ 2] = "26.99";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 4][ 3] = "1.767";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 4][ 4] = "6.4";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 4][ 5] = "167";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 4][ 6] = "8.3";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 4][ 7] = "206";
+TableRowTypes1[ 5] = 3;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 5][ 0] = "Total";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 5][ 1] = "59.15";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 5][ 2] = "78.48";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 5][ 3] = "1.327";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 5][ 4] = "2.5";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 5][ 5] = "127";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 5][ 6] = "4.3";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 5][ 7] = "155";
+</JavaScriptFile>
+<JavaScriptFile, filetype=4, filename="C:\QDR\qdrdicom\html2\Image.js">
+/ Filename = C:\QDR\qdrdicom\html2\Image.js
+// Written By HologicDICOMControl
+ImageTitle1 = "Image not for diagnostic use";
+ImageTitle2 = "114 x 130";
+ImageTitle5 = "k = 1.140, d0 = 43.7";
+</JavaScriptFile>
+<JavaScriptFile, filetype=5, filename="C:\QDR\qdrdicom\html2\Graph.js">
+/ Filename = C:\QDR\qdrdicom\html2\Graph.js
+// Written By HologicDICOMControl
+GraphTitle2 = "T-score vs. White Female. Source:2012 BMDCS/Hologic<br> Z-score vs. White Female. Source:2012 BMDCS/Hologic";
+</JavaScriptFile>
+<JavaScriptFile, filetype=7, filename="C:\QDR\qdrdicom\html2\Fracture.js">
+/ Filename = C:\QDR\qdrdicom\html2\Fracture.js
+// Written By HologicDICOMControl
+FractureRiskStr = "Fracture Risk: Not Increased; WHO Classification: Normal";
+</JavaScriptFile>

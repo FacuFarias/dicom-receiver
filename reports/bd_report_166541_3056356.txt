@@ -1,0 +1,14 @@
+<strong>EXAM: BONE DENSITOMETRY</strong>
+
+<strong>History:</strong> Evaluate for osteoporosis.
+Technique: Bone density study was performed to evaluate the lumbar spine and the left hip.
+Comparison: 01/02/2025.
+
+<strong>FINDINGS:</strong>
+<strong>LUMBAR SPINE:</strong> The bone mineral density in the lumbar spine (L1-L4) is 0.764 g/cm² with a T-score of -2.6 and a Z-score of -0.8. The bone mineral density in the lumbar spine remained stable since 2025.
+<strong>LEFT HIP (FEMORAL NECK):</strong> The bone mineral density in the left femoral neck is 0.629 g/cm² with a T-score of -2.1 and a Z-score of -0.7. The bone mineral density in the left femoral neck remained stable since 2025.
+
+<strong>IMPRESSION:</strong>
+According to the World Health Organization's standards, bone mineral density in the lumbar spine is osteoporotic. Highly increased risk of fracture. Treatment is advised.
+Bone mineral density in the left hip is osteopenic. Moderately increased risk of fracture. Treatment is advised.
+Follow-up bone mineral density exam is recommended in [12] months.

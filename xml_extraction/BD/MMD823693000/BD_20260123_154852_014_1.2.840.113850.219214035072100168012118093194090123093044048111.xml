@@ -1,0 +1,257 @@
+<HologicHeader1>
+<Institution>
+<Name>Memorial Women's Center </Name>
+<StreetAddress>1241 Campbell Rd</StreetAddress>
+<CityAddress>Houston , TX 77055</CityAddress>
+<Phone>713-461-3399</Phone>
+<Fax>713-461-1969</Fax>
+<Email>www.memorialdiagnostic.com</Email>
+</Institution>
+<GeneralData>
+<LSCForDiffTypes>0</LSCForDiffTypes>
+<ScanID>A0123260B</ScanID>
+<ReportType> 1</ReportType>
+<RegionForPlot> 17</RegionForPlot>
+<Range> 0</Range>
+<ROI> 0</ROI>
+<RefCurveID> 3129</RefCurveID>
+<k> 1.144677</k>
+<d0> 54.127475</d0>
+<Thickness> 5.661734</Thickness>
+<ROIWidth> 101</ROIWidth>
+<ROIHeight> 100</ROIHeight>
+<ImageXSize> 252</ImageXSize>
+<ImageYSize> 320</ImageYSize>
+<GraphXSize> 359</GraphXSize>
+<GraphYSize> 320</GraphYSize>
+<ImageXPos> 416</ImageXPos>
+<ImageYPos> 180</ImageYPos>
+<GraphXPos> 680</GraphXPos>
+<GraphYPos> 180</GraphYPos>
+<HL71Name></HL71Name>
+<HL71Value></HL71Value>
+<HL72Name></HL72Name>
+<HL72Value></HL72Value>
+<HL73Name></HL73Name>
+<HL73Value></HL73Value>
+<ImagePro></ImagePro>
+</GeneralData>
+</HologicHeader1>
+<JavaScriptFile, filetype=1, filename="C:\QDR\qdrdicom\html2\PatInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\PatInfo.js
+// Written By HologicDICOMControl
+PatientTitle = "Patient Information:";
+PatientName = "SALDARRIAGA, VICTORIA E";
+SSN = " ";
+PatientID = "MMD823693000";
+PostalCode = " ";
+PatientSex = "Female";
+Ethnicity = "Hispanic";
+Height = "61.0 in";
+Weight = "135.0  lb";
+DOB = "02/03/1958";
+Age = "67";
+MenopauseAge = "42";
+ReferringPhysician = "garcia-deleon, ivonne";
+</JavaScriptFile>
+<JavaScriptFile, filetype=2, filename="C:\QDR\qdrdicom\html2\ScanInfo.js">
+/ Filename = C:\QDR\qdrdicom\html2\ScanInfo.js
+// Written By HologicDICOMControl
+ScanTitle = "Scan Information:";
+Scan = "January 23, 2026 - A0123260B";
+ScanMode = "f Right Hip";
+AnalDate = "01/23/2026 09:11";
+AnalProtocol = "Hip";
+Institution = "Memorial Women's Center ";
+Operator = "EO";
+Model = "Horizon Ci (S/N306570M)";
+Comment = " ";
+ReportDate = "01/23/2026 09:12";
+HologicSoftwareVer = "13.6.1.4";
+ResultType = "1";
+</JavaScriptFile>
+<JavaScriptFile, filetype=6, filename="C:\QDR\qdrdicom\html2\PComment.js">
+/ Filename = C:\QDR\qdrdicom\html2\PComment.js
+// Written By HologicDICOMControl
+PhysicianComment = "All treatment decisions require clinical judgment and consideration of individual patient factors, including patient preferences, comorbidities, previous drug use and risk factors not captured in the FRAX model (e.g. frailty, falls, vitamin D deficiency, increased bone turnover, interval significant decline in BMD).";
+</JavaScriptFile>
+<JavaScriptFile, filetype=3, filename="C:\QDR\qdrdicom\html2\Results.js">
+/ Filename = C:\QDR\qdrdicom\html2\Results.js
+// Written By HologicDICOMControl
+IncludeTable1 = true;
+MAXROWS1 = 3;
+MAXCOLS1 = 8;
+TableTitle1 = "Results Summary:";
+TableType1 = 1;
+TableNote1 = "Total BMD CV 1.0%, ACF = 1.018, BCF = 1.004, TH = 5.662";
+TableRowTypes1[ 0] = 1;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 0][ 0] = "Region";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 0][ 1] = "Area[cm<sup><small>2</small></sup>]";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 0][ 2] = "BMC[(g)]";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 0][ 3] = "BMD[g/cm<sup><small>2</small></sup>]";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 0][ 4] = "T-score";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 0][ 5] = "PR (Peak Reference)";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 0][ 6] = "Z-score";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 0][ 7] = "AM (Age Matched)";
+TableRowTypes1[ 1] = 10;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 1][ 0] = "Neck";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 1][ 1] = "4.52";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 1][ 2] = "2.39";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 1][ 3] = "0.529";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 1][ 4] = "-2.9";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 1][ 5] = "60";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 1][ 6] = "-1.3";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 1][ 7] = "77";
+TableRowTypes1[ 2] = 3;
+TableColumnTypes1[ 0] = 1;
+ResultsTable1[ 2][ 0] = "Total";
+TableColumnTypes1[ 1] = 2;
+ResultsTable1[ 2][ 1] = "30.71";
+TableColumnTypes1[ 2] = 4;
+ResultsTable1[ 2][ 2] = "20.23";
+TableColumnTypes1[ 3] = 3;
+ResultsTable1[ 2][ 3] = "0.659";
+TableColumnTypes1[ 4] = 5;
+ResultsTable1[ 2][ 4] = "-2.3";
+TableColumnTypes1[ 5] = 7;
+ResultsTable1[ 2][ 5] = "68";
+TableColumnTypes1[ 6] = 6;
+ResultsTable1[ 2][ 6] = "-1.0";
+TableColumnTypes1[ 7] = 13;
+ResultsTable1[ 2][ 7] = "84";
+IncludeTable2 = true;
+MAXROWS2 = 4;
+MAXCOLS2 = 6;
+TableTitle2 = "Results History:";
+TableType2 = 2;
+TableNote2 = " ";
+DissimilarVertLevels2 = "False";
+TableRowTypes2[ 0] = 1;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 0][ 0] = "Scan Date";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 0][ 1] = "Age";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 0][ 2] = "BMD";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 0][ 3] = "T-score";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 0][ 4] = "BMD Change vs Baseline";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 0][ 5] = "BMD Change vs Previous";
+TableRowTypes2[ 1] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 1][ 0] = "01/23/2026";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 1][ 1] = "67";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 1][ 2] = "0.659";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 1][ 3] = "-2.3";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 1][ 4] = "-1.2%";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 1][ 5] = "0.6%";
+TableRowTypes2[ 2] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 2][ 0] = "01/11/2024";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 2][ 1] = "65";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 2][ 2] = "0.655";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 2][ 3] = "-2.3";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 2][ 4] = "-1.8%";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 2][ 5] = "-1.8%";
+TableRowTypes2[ 3] = 4;
+TableColumnTypes2[ 0] = 16;
+ResultsTable2[ 3][ 0] = "07/26/2023";
+TableColumnTypes2[ 1] = 17;
+ResultsTable2[ 3][ 1] = "65";
+TableColumnTypes2[ 2] = 3;
+ResultsTable2[ 3][ 2] = "0.667";
+TableColumnTypes2[ 3] = 5;
+ResultsTable2[ 3][ 3] = "-2.2";
+TableColumnTypes2[ 4] = 18;
+ResultsTable2[ 3][ 4] = " ";
+TableColumnTypes2[ 5] = 19;
+ResultsTable2[ 3][ 5] = " ";
+IncludeTable3 = true;
+MAXROWS3 = 5;
+MAXCOLS3 = 3;
+TableTitle3 = "10-year Fracture Risk¹";
+TableType3 = 8;
+TableNote3 = "¹ FRAX® Version 3.08. Fracture probability calculated for an untreated patient. Fracture probability may be lower if the patient has received treatment.";
+TableRowTypes3[ 0] = 1;
+TableColumnTypes3[ 0] = 20;
+ResultsTable3[ 0][ 0] = "10-year Fracture Risk¹";
+TableColumnTypes3[ 1] = 32;
+ResultsTable3[ 0][ 1] = "Without Prior Fracture";
+TableColumnTypes3[ 2] = 33;
+ResultsTable3[ 0][ 2] = "With Prior Fracture";
+TableRowTypes3[ 1] = 71;
+TableColumnTypes3[ 0] = 20;
+ResultsTable3[ 1][ 0] = "Major Osteoporotic Fracture";
+TableColumnTypes3[ 1] = 32;
+ResultsTable3[ 1][ 1] = "15%";
+TableColumnTypes3[ 2] = 33;
+ResultsTable3[ 1][ 2] = "24%";
+TableRowTypes3[ 2] = 72;
+TableColumnTypes3[ 0] = 20;
+ResultsTable3[ 2][ 0] = "Hip Fracture";
+TableColumnTypes3[ 1] = 32;
+ResultsTable3[ 2][ 1] = "3.8%";
+TableColumnTypes3[ 2] = 33;
+ResultsTable3[ 2][ 2] = "6.0%";
+TableRowTypes3[ 3] = 112;
+TableColumnTypes3[ 0] = 20;
+ResultsTable3[ 3][ 0] = "Reported Risk Factors:";
+TableColumnTypes3[ 1] = 32;
+ResultsTable3[ 3][ 1] = " ";
+TableColumnTypes3[ 2] = 33;
+ResultsTable3[ 3][ 2] = " ";
+TableRowTypes3[ 4] = 73;
+TableColumnTypes3[ 0] = 20;
+ResultsTable3[ 4][ 0] = "US (Hispanic), T-score(WHO)=-2.7, BMI=25.5, parental fracture";
+TableColumnTypes3[ 1] = 32;
+ResultsTable3[ 4][ 1] = " ";
+TableColumnTypes3[ 2] = 33;
+ResultsTable3[ 4][ 2] = " ";
+</JavaScriptFile>
+<JavaScriptFile, filetype=4, filename="C:\QDR\qdrdicom\html2\Image.js">
+/ Filename = C:\QDR\qdrdicom\html2\Image.js
+// Written By HologicDICOMControl
+ImageTitle1 = "Image not for diagnostic use";
+ImageTitle2 = "101 x 100";
+ImageTitle3 = "NECK: 49 x 15";
+ImageTitle5 = "k = 1.145, d0 = 54.1";
+</JavaScriptFile>
+<JavaScriptFile, filetype=5, filename="C:\QDR\qdrdicom\html2\Graph.js">
+/ Filename = C:\QDR\qdrdicom\html2\Graph.js
+// Written By HologicDICOMControl
+GraphTitle2 = "T-score vs. Hispanic Female. Source:NHANES<br> Z-score vs. Hispanic Female. Source:NHANES";
+</JavaScriptFile>
+<JavaScriptFile, filetype=7, filename="C:\QDR\qdrdicom\html2\Fracture.js">
+/ Filename = C:\QDR\qdrdicom\html2\Fracture.js
+// Written By HologicDICOMControl
+FractureRiskStr = "WHO Classification: Osteoporosis<BR>* Denotes significance at 95% confidence level, LSC is 0.027 g/cm²";
+</JavaScriptFile>
+ 

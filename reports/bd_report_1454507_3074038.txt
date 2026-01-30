@@ -1,0 +1,13 @@
+<strong>EXAM: BONE DENSITOMETRY</strong>
+
+<strong>History:</strong> Evaluate for osteoporosis.
+Technique: Bone density study was performed to evaluate the lumbar spine and the right hip.
+Comparison: [None available].
+
+<strong>FINDINGS:</strong>
+<strong>LUMBAR SPINE:</strong> The bone mineral density in the lumbar spine (L1-L4) is 0.679 g/cm² with a T-score of -3.7 and a Z-score of -2.7.
+<strong>RIGHT HIP (FEMORAL NECK):</strong> The bone mineral density in the right femoral neck is 0.511 g/cm² with a T-score of -3.6 and a Z-score of -2.2.
+
+<strong>IMPRESSION:</strong>
+According to the World Health Organization's standards, bone mineral density in the lumbar spine and the right hip is osteoporotic. Highly increased risk of fracture. Treatment is advised.
+Follow-up bone mineral density exam is recommended in [12] months.

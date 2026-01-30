@@ -1,0 +1,11 @@
+[Unit]
+Description=DICOM Files Cleanup Timer
+Documentation=Ejecuta limpieza de archivos DICOM cada hora
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

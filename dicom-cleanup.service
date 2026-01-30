@@ -1,0 +1,16 @@
+[Unit]
+Description=DICOM Files Cleanup Service
+Documentation=Elimina archivos DICOM más antiguos de 24 horas
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/DICOMReceiver
+ExecStart=/home/ubuntu/DICOMReceiver/cleanup_dicom_files.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dicom-cleanup
+
+[Install]
+WantedBy=multi-user.target

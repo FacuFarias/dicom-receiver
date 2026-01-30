@@ -1,0 +1,17 @@
+<strong>EXAM: BONE DENSITOMETRY</strong>
+
+<strong>History:</strong> Evaluate for osteoporosis.
+Technique: Bone density study was performed to evaluate the lumbar spine.
+Comparison: [None available].
+
+<strong>FINDINGS:</strong>
+<strong>LUMBAR SPINE:</strong> The bone mineral density in the lumbar spine (L1-L4) is None g/cm² with a T-score of None and a Z-score of None.
+
+<strong>10-YEAR FRACTURE PROBABILITY (FRAX):</strong>
+  FRAX not reported (all T-scores at or above -1.0)
+
+<strong>WHO CLASSIFICATION:</strong>
+  None
+
+<strong>IMPRESSION:</strong>
+Follow-up bone mineral density exam is recommended in [24] months.

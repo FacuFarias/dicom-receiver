@@ -2,3 +2,7 @@ pydicom==2.4.4
 pynetdicom==2.1.0
 Pillow==12.0.0
 numpy==2.4.0
+Flask==3.0.0
+Flask-CORS==4.0.0
+psycopg2-binary==2.9.9
+requests==2.31.0

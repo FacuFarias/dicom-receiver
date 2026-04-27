@@ -24,6 +24,11 @@ pip-delete-this-directory.txt
 
 # Logs
 *.log
+logs/
+
+# Runtime data artifacts
+xml_extraction/
+reports/
 
 # Archivos de sistema
 .DS_Store

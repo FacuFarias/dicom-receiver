@@ -1,6 +1,6 @@
 [Unit]
 Description=DICOM Files Cleanup Service
-Documentation=Elimina archivos DICOM más antiguos de 24 horas
+Documentation=Elimina archivos US (3h), BD (24h) y otros DICOM (30d)
 
 [Service]
 Type=oneshot

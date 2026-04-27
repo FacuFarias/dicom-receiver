@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Extractor híbrido BD Report:
+Extractor BD Report para estudios DESERT (single-hip):
 - Datos demográficos y clínicos: XML embebido en DICOM
 - FRAX Major value: OCR de imagen JPEG (pixel extraction)
 - Guardado automático en PostgreSQL (reports.bd)
+- NO extrae valores FRAX "with prior fracture"
 """
 
 import subprocess
@@ -17,28 +18,6 @@ import uuid
 
 # Variable global para preservar lumbar_vertebrae_range entre archivos del mismo paciente
 _lumbar_vertebrae_cache = {}
-
-# Logging function for BD processing
-def log_bd_processing_local(patient_id, step, status, details=""):
-    """
-    Registra cada paso del procesamiento BD en archivo de log centralizado.
-    
-    Args:
-        patient_id: ID del paciente
-        step: Paso del proceso (FRAX_EXTRACTION, DATA_SOURCE, etc.)
-        status: Estado (SUCCESS, INFO, WARNING, ERROR)
-        details: Detalles adicionales
-    """
-    try:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_file = Path("/home/ubuntu/DICOMReceiver/logs/bd_processing.log")
-        
-        log_entry = f"[{timestamp}] [Patient: {patient_id}] [{step}] [{status}] {details}\n"
-        
-        with open(log_file, 'a', encoding='utf-8') as f:
-            f.write(log_entry)
-    except Exception as e:
-        print(f"Warning: Could not write to log file: {e}")
 
 def is_pediatric_patient(xml_text, age):
     """
@@ -373,11 +352,9 @@ def extract_from_xml(xml_text):
     #   - ResultsTable1 con fila "Neck"
     # ═════════════════════════════════════════════════════════════════════════════
     
-    # Detectar si es formato Memorial (tiene ScanMode2)
+    # DESERT: No procesar formato Memorial dual-hip
+    # Este script es específico para Desert (single-hip)
     is_memorial_format = bool(re.search(r'ScanMode2\s*=\s*"([^"]+)"', xml_text))
-    
-    # Agregar flag al diccionario data para usarlo en extracción de FRAX
-    data['_is_memorial_format'] = is_memorial_format
     
     if is_memorial_format:
         print("    📋 Formato MEMORIAL detectado (dual-hip en un archivo)")
@@ -733,36 +710,35 @@ def extract_from_xml(xml_text):
             except:
                 pass
         
-        # Intentar extraer FRAX con prior fracture
-        # Funciona tanto para formato Memorial (ResultsTable3) como Desert (ResultsTable2)
-        # cuando la tabla tiene explícitamente la columna "With Prior Fracture"
-
-        # Verificar si ResultsTable2 tiene columna "With Prior Fracture" (formato Desert/Horizon)
-        has_prior_col_table2 = bool(re.search(
-            r'ResultsTable2\[\s*0\]\[\s*2\]\s*=\s*"[^"]*[Ww]ith\s+[Pp]rior', xml_text))
-
-        if is_frax_table3 and data.get('_is_memorial_format'):
-            # Memorial: extraer de ResultsTable3 columna [2]
+        # DESERT: NO extraer valores FRAX "with prior fracture"
+        # La columna 2 en ResultsTable3 es un cálculo estándar del equipo, no específico del paciente
+        # Solo Memorial dual-hip debe extraer estos valores
+        if False:  # Deshabilitado para Desert
+            # Major fracture WITH prior fracture
             major_prior_match = re.search(r'ResultsTable3\[\s*1\]\[\s*2\]\s*=\s*"([^"]+)"', xml_text)
-            hip_prior_match   = re.search(r'ResultsTable3\[\s*2\]\[\s*2\]\s*=\s*"([^"]+)"', xml_text)
-        elif has_prior_col_table2:
-            # Desert/Horizon: extraer de ResultsTable2 columna [2]
-            major_prior_match = re.search(r'ResultsTable2\[\s*1\]\[\s*2\]\s*=\s*"([^"]+)"', xml_text)
-            hip_prior_match   = re.search(r'ResultsTable2\[\s*2\]\[\s*2\]\s*=\s*"([^"]+)"', xml_text)
-        else:
-            major_prior_match = None
-            hip_prior_match   = None
-
-        for field, match in [('major_fracture_risk_prior', major_prior_match),
-                              ('hip_fracture_risk_prior', hip_prior_match)]:
-            if match:
-                val = re.sub(r'<[^>]+>', '', match.group(1).strip())
+            if major_prior_match:
+                val = re.sub(r'<[^>]+>', '', major_prior_match.group(1).strip())
+                # Eliminar signo "<" al inicio (ej: "<0.1" -> "0.1")
                 val = re.sub(r'^<\s*', '', val)
+                # Validar que sea un número válido (< 50) y diferente del without prior
                 try:
                     num_val = float(val.replace('%', ''))
-                    without_prior_key = field.replace('_prior', '')
-                    if num_val < 50 and val != data.get(without_prior_key, ''):
-                        data[field] = val
+                    if num_val < 50 and val != data.get('major_fracture_risk', ''):
+                        data['major_fracture_risk_prior'] = val
+                except:
+                    pass
+            
+            # Hip fracture WITH prior fracture
+            hip_prior_match = re.search(r'ResultsTable3\[\s*2\]\[\s*2\]\s*=\s*"([^"]+)"', xml_text)
+            if hip_prior_match:
+                val = re.sub(r'<[^>]+>', '', hip_prior_match.group(1).strip())
+                # Eliminar signo "<" al inicio (ej: "<0.1" -> "0.1")
+                val = re.sub(r'^<\s*', '', val)
+                # Validar que sea un número válido (< 50) y diferente del without prior
+                try:
+                    num_val = float(val.replace('%', ''))
+                    if num_val < 50 and val != data.get('hip_fracture_risk', ''):
+                        data['hip_fracture_risk_prior'] = val
                 except:
                     pass
     
@@ -857,7 +833,7 @@ def format_regions_list(regions):
         # 3 o más elementos: usar comas y "and" antes del último
         return ", ".join(regions[:-1]) + f", and {regions[-1]}"
 
-def generate_impression(data, hip_side, femoral_neck_only=False):
+def generate_impression(data, hip_side):
     """
     Genera IMPRESSION detallada basada en clasificación WHO de cada región
     Agrupa regiones por clasificación (Osteoporosis, Osteopenia, Normal)
@@ -923,37 +899,32 @@ def generate_impression(data, hip_side, femoral_neck_only=False):
             normal_regions.append("the right forearm")
     
     # 3. Agregar hips al final
-    # En impresión se mantiene siempre terminología de cadera (hip/hips).
-    both_hips_label = "both hips"
-    left_hip_label = "the left hip"
-    right_hip_label = "the right hip"
-
     if left_hip_class and right_hip_class and left_hip_class == right_hip_class:
         # Ambas caderas con la misma clasificación - agrupar como "both hips"
         if left_hip_class == "Osteoporosis":
-            osteoporosis_regions.append(both_hips_label)
+            osteoporosis_regions.append("both hips")
             has_osteoporosis = True
         elif left_hip_class == "Osteopenia":
-            osteopenia_regions.append(both_hips_label)
+            osteopenia_regions.append("both hips")
         elif left_hip_class == "Normal":
-            normal_regions.append(both_hips_label)
+            normal_regions.append("both hips")
     else:
         # Tratar individualmente
         if left_hip_class == "Osteoporosis":
-            osteoporosis_regions.append(left_hip_label)
+            osteoporosis_regions.append("the left hip")
             has_osteoporosis = True
         elif left_hip_class == "Osteopenia":
-            osteopenia_regions.append(left_hip_label)
+            osteopenia_regions.append("the left hip")
         elif left_hip_class == "Normal":
-            normal_regions.append(left_hip_label)
+            normal_regions.append("the left hip")
         
         if right_hip_class == "Osteoporosis":
-            osteoporosis_regions.append(right_hip_label)
+            osteoporosis_regions.append("the right hip")
             has_osteoporosis = True
         elif right_hip_class == "Osteopenia":
-            osteopenia_regions.append(right_hip_label)
+            osteopenia_regions.append("the right hip")
         elif right_hip_class == "Normal":
-            normal_regions.append(right_hip_label)
+            normal_regions.append("the right hip")
     
     # Generar oraciones agrupadas por clasificación
     is_first = True
@@ -1009,9 +980,6 @@ def extract_major_frax_from_ocr(image_path):
 
 def generate_report(data):
     """Genera reporte médico con datos híbridos, soporta ambas caderas"""
-
-    # Modo opcional: reportar caderas solo como femoral neck (sin encabezados RIGHT/LEFT HIP)
-    femoral_neck_only = bool(data.get('femoral_neck_only'))
     
     # Obtener z-score lumbar directamente de data
     lumbar_zscore = data.get('lumbar_zscore', '')
@@ -1114,19 +1082,10 @@ def generate_report(data):
         right_forearm_prev_date = data.get('right_forearm_prev_date')
         right_forearm_change = data.get('right_forearm_change_percent')
         if right_forearm_prev_date and right_forearm_change:
-            # Extraer año de la fecha (soporta MM/DD/YYYY o YYYY-MM-DD)
-            year = None
-            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', str(right_forearm_prev_date))
+            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', right_forearm_prev_date)
             if year_match:
                 year = year_match.group(1)
-            else:
-                # Intentar formato YYYY-MM-DD
-                year_match = re.match(r'(\d{4})-\d{2}-\d{2}', str(right_forearm_prev_date))
-                if year_match:
-                    year = year_match.group(1)
-            
-            if year:
-                change_val = str(right_forearm_change).replace('-', '').replace('+', '').replace('#', '').replace('*', '')
+                change_val = right_forearm_change.replace('-', '').replace('+', '').replace('#', '').replace('*', '')
                 # Si el valor contiene paréntesis, extraer solo el porcentaje
                 if '(' in change_val and ')' in change_val:
                     pct_match = re.search(r'\(([^)]+)\)', change_val)
@@ -1138,11 +1097,11 @@ def generate_report(data):
                     if abs(change_float) <= 3:
                         right_forearm_comparison = f" The bone mineral density remained stable since [{year}]."
                     else:
-                        change_text = "decreased" if "-" in str(right_forearm_change) else "increased"
+                        change_text = "decreased" if "-" in right_forearm_change else "increased"
                         right_forearm_comparison = f" The bone mineral density {change_text} by {change_val} since [{year}]."
                 except ValueError:
                     # Si no se puede convertir, usar lógica antigua
-                    change_text = "decreased" if "-" in str(right_forearm_change) else "increased"
+                    change_text = "decreased" if "-" in right_forearm_change else "increased"
                     right_forearm_comparison = f" The bone mineral density {change_text} by {change_val} since [{year}]."
         
         zscore_text = f" and a Z-score of {right_forearm_zscore}" if right_forearm_zscore and str(right_forearm_zscore) != 'None' else ""
@@ -1157,19 +1116,10 @@ def generate_report(data):
         left_forearm_prev_date = data.get('left_forearm_prev_date')
         left_forearm_change = data.get('left_forearm_change_percent')
         if left_forearm_prev_date and left_forearm_change:
-            # Extraer año de la fecha (soporta MM/DD/YYYY o YYYY-MM-DD)
-            year = None
-            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', str(left_forearm_prev_date))
+            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', left_forearm_prev_date)
             if year_match:
                 year = year_match.group(1)
-            else:
-                # Intentar formato YYYY-MM-DD
-                year_match = re.match(r'(\d{4})-\d{2}-\d{2}', str(left_forearm_prev_date))
-                if year_match:
-                    year = year_match.group(1)
-            
-            if year:
-                change_val = str(left_forearm_change).replace('-', '').replace('+', '').replace('#', '').replace('*', '')
+                change_val = left_forearm_change.replace('-', '').replace('+', '').replace('#', '').replace('*', '')
                 # Si el valor contiene paréntesis, extraer solo el porcentaje
                 if '(' in change_val and ')' in change_val:
                     pct_match = re.search(r'\(([^)]+)\)', change_val)
@@ -1181,11 +1131,11 @@ def generate_report(data):
                     if abs(change_float) <= 3:
                         left_forearm_comparison = f" The bone mineral density remained stable since [{year}]."
                     else:
-                        change_text = "decreased" if "-" in str(left_forearm_change) else "increased"
+                        change_text = "decreased" if "-" in left_forearm_change else "increased"
                         left_forearm_comparison = f" The bone mineral density {change_text} by {change_val} since [{year}]."
                 except ValueError:
                     # Si no se puede convertir, usar lógica antigua
-                    change_text = "decreased" if "-" in str(left_forearm_change) else "increased"
+                    change_text = "decreased" if "-" in left_forearm_change else "increased"
                     left_forearm_comparison = f" The bone mineral density {change_text} by {change_val} since [{year}]."
         
         zscore_text = f" and a Z-score of {left_forearm_zscore}" if left_forearm_zscore and str(left_forearm_zscore) != 'None' else ""
@@ -1202,66 +1152,35 @@ def generate_report(data):
         right_hip_tscore = data.get('right_hip_tscore', '')
         right_hip_zscore = data.get('right_hip_zscore', '')
         
-        right_total_hip_bmd = data.get('right_total_hip_bmd', '')
-        right_total_hip_tscore = data.get('right_total_hip_tscore', '')
-        right_total_hip_zscore = data.get('right_total_hip_zscore', '')
-        
         # Construir texto de comparación para right hip si hay datos históricos
         right_hip_comparison = ""
         right_hip_prev_date = data.get('right_hip_prev_date')
         right_hip_change = data.get('right_hip_change_percent')
         if right_hip_prev_date and right_hip_change:
-            # Extraer año de la fecha (soporta MM/DD/YYYY o YYYY-MM-DD)
-            year = None
-            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', str(right_hip_prev_date))
+            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', right_hip_prev_date)
             if year_match:
                 year = year_match.group(1)
-            else:
-                # Intentar formato YYYY-MM-DD
-                year_match = re.match(r'(\d{4})-\d{2}-\d{2}', str(right_hip_prev_date))
-                if year_match:
-                    year = year_match.group(1)
-            
-            if year:
-                change_val = str(right_hip_change).replace('-', '').replace('+', '').replace('#', '').replace('*', '')
+                change_val = right_hip_change.replace('-', '').replace('+', '').replace('#', '').replace('*', '')
                 # Si el valor contiene paréntesis, extraer solo el porcentaje
                 if '(' in change_val and ')' in change_val:
                     pct_match = re.search(r'\(([^)]+)\)', change_val)
                     if pct_match:
                         change_val = pct_match.group(1)
-                if '%' not in change_val:
-                    change_val = f"{change_val}%"
                 # Convertir a float para comparar
                 try:
                     change_float = float(change_val.replace('%', ''))
                     if abs(change_float) <= 3:
-                        right_hip_comparison = f" The bone mineral density remained stable since {year}."
+                        right_hip_comparison = f" The bone mineral density in the right femoral neck remained stable since {year}."
                     else:
-                        change_text = "decreased" if "-" in str(right_hip_change) else "increased"
+                        change_text = "decreased" if "-" in right_hip_change else "increased"
                         right_hip_comparison = f" The bone mineral density [{change_text}] by {change_val} since {year}."
                 except ValueError:
                     # Si no se puede convertir, usar lógica antigua
-                    change_text = "decreased" if "-" in str(right_hip_change) else "increased"
+                    change_text = "decreased" if "-" in right_hip_change else "increased"
                     right_hip_comparison = f" The bone mineral density [{change_text}] by {change_val} since {year}."
         
-        # El encabezado se mantiene como RIGHT HIP aunque el contenido sea femoral neck.
-        right_hip_section = "<strong>RIGHT HIP:</strong> "
-        
-        # Add total hip line if available
-        if (not femoral_neck_only) and right_total_hip_bmd and str(right_total_hip_bmd) != 'None' and str(right_total_hip_bmd).strip():
-            zscore_text_total = f" and a Z-score of {right_total_hip_zscore}" if right_total_hip_zscore and str(right_total_hip_zscore) != 'None' else ""
-            right_hip_section += f"The bone mineral density in the right hip is {right_total_hip_bmd} g/cm² with a T-score of {right_total_hip_tscore}{zscore_text_total}.\n"
-        
-        # Add femoral neck line if available
-        if right_hip_bmd and str(right_hip_bmd) != 'None' and str(right_hip_bmd).strip():
-            zscore_text_neck = f" and a Z-score of {right_hip_zscore}" if right_hip_zscore and str(right_hip_zscore) != 'None' else ""
-            right_hip_section += f"The bone mineral density in the right femoral neck is {right_hip_bmd} g/cm² with a T-score of {right_hip_tscore}{zscore_text_neck}."
-        
-        # Add comparison text
-        if right_hip_comparison:
-            right_hip_section += right_hip_comparison
-        
-        right_hip_section += "\n\n"
+        zscore_text = f" and a Z-score of {right_hip_zscore}" if right_hip_zscore and str(right_hip_zscore) != 'None' else ""
+        right_hip_section = f"<strong>RIGHT HIP (FEMORAL NECK):</strong> The bone mineral density in the right femoral neck is {right_hip_bmd} g/cm² with a T-score of {right_hip_tscore}{zscore_text}.{right_hip_comparison}\n\n"
     
     # LEFT HIP
     if has_left_hip:
@@ -1269,92 +1188,51 @@ def generate_report(data):
         left_hip_tscore = data.get('left_hip_tscore', '')
         left_hip_zscore = data.get('left_hip_zscore', '')
         
-        left_total_hip_bmd = data.get('left_total_hip_bmd', '')
-        left_total_hip_tscore = data.get('left_total_hip_tscore', '')
-        left_total_hip_zscore = data.get('left_total_hip_zscore', '')
-        
         # Construir texto de comparación para left hip si hay datos históricos
         left_hip_comparison = ""
         left_hip_prev_date = data.get('left_hip_prev_date')
         left_hip_change = data.get('left_hip_change_percent')
         if left_hip_prev_date and left_hip_change:
-            # Extraer año de la fecha (soporta MM/DD/YYYY o YYYY-MM-DD)
-            year = None
-            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', str(left_hip_prev_date))
+            year_match = re.match(r'\d{2}/\d{2}/(\d{4})', left_hip_prev_date)
             if year_match:
                 year = year_match.group(1)
-            else:
-                # Intentar formato YYYY-MM-DD
-                year_match = re.match(r'(\d{4})-\d{2}-\d{2}', str(left_hip_prev_date))
-                if year_match:
-                    year = year_match.group(1)
-            
-            if year:
-                change_val = str(left_hip_change).replace('-', '').replace('+', '').replace('#', '').replace('*', '')
+                change_val = left_hip_change.replace('-', '').replace('+', '').replace('#', '').replace('*', '')
                 # Si el valor contiene paréntesis, extraer solo el porcentaje
                 if '(' in change_val and ')' in change_val:
                     pct_match = re.search(r'\(([^)]+)\)', change_val)
                     if pct_match:
                         change_val = pct_match.group(1)
-                if '%' not in change_val:
-                    change_val = f"{change_val}%"
                 # Convertir a float para comparar
                 try:
                     change_float = float(change_val.replace('%', ''))
                     if abs(change_float) <= 3:
-                        left_hip_comparison = f" The bone mineral density remained stable since {year}."
+                        left_hip_comparison = f" The bone mineral density in the left femoral neck remained stable since {year}."
                     else:
-                        change_text = "decreased" if "-" in str(left_hip_change) else "increased"
+                        change_text = "decreased" if "-" in left_hip_change else "increased"
                         left_hip_comparison = f" The bone mineral density [{change_text}] by {change_val} since {year}."
                 except ValueError:
                     # Si no se puede convertir, usar lógica antigua
-                    change_text = "decreased" if "-" in str(left_hip_change) else "increased"
+                    change_text = "decreased" if "-" in left_hip_change else "increased"
                     left_hip_comparison = f" The bone mineral density [{change_text}] by {change_val} since {year}."
         
-        # El encabezado se mantiene como LEFT HIP aunque el contenido sea femoral neck.
-        left_hip_section = "<strong>LEFT HIP:</strong> "
-        
-        # Add total hip line if available
-        if (not femoral_neck_only) and left_total_hip_bmd and str(left_total_hip_bmd) != 'None' and str(left_total_hip_bmd).strip():
-            zscore_text_total = f" and a Z-score of {left_total_hip_zscore}" if left_total_hip_zscore and str(left_total_hip_zscore) != 'None' else ""
-            left_hip_section += f"The bone mineral density in the left hip is {left_total_hip_bmd} g/cm² with a T-score of {left_total_hip_tscore}{zscore_text_total}.\n"
-        
-        # Add femoral neck line if available
-        if left_hip_bmd and str(left_hip_bmd) != 'None' and str(left_hip_bmd).strip():
-            zscore_text_neck = f" and a Z-score of {left_hip_zscore}" if left_hip_zscore and str(left_hip_zscore) != 'None' else ""
-            left_hip_section += f"The bone mineral density in the left femoral neck is {left_hip_bmd} g/cm² with a T-score of {left_hip_tscore}{zscore_text_neck}."
-        
-        # Add comparison text
-        if left_hip_comparison:
-            left_hip_section += left_hip_comparison
-        
-        left_hip_section += "\n\n"
+        zscore_text = f" and a Z-score of {left_hip_zscore}" if left_hip_zscore and str(left_hip_zscore) != 'None' else ""
+        left_hip_section = f"<strong>LEFT HIP (FEMORAL NECK):</strong> The bone mineral density in the left femoral neck is {left_hip_bmd} g/cm² with a T-score of {left_hip_tscore}{zscore_text}.{left_hip_comparison}\n\n"
     
     # Construir texto de comparación para lumbar si hay datos históricos
     lumbar_comparison = ""
     lumbar_prev_date = data.get('lumbar_prev_date')
     lumbar_change = data.get('lumbar_change_percent')
     if lumbar_prev_date and lumbar_change:
-        # Extraer año de la fecha (soporta MM/DD/YYYY o YYYY-MM-DD)
-        year = None
-        year_match = re.match(r'\d{2}/\d{2}/(\d{4})', str(lumbar_prev_date))
+        # Extraer año de la fecha (formato MM/DD/YYYY)
+        year_match = re.match(r'\d{2}/\d{2}/(\d{4})', lumbar_prev_date)
         if year_match:
             year = year_match.group(1)
-        else:
-            # Intentar formato YYYY-MM-DD
-            year_match = re.match(r'(\d{4})-\d{2}-\d{2}', str(lumbar_prev_date))
-            if year_match:
-                year = year_match.group(1)
-        
-        if year:
-            change_val = str(lumbar_change).replace('-', '').replace('+', '').replace('#', '').replace('*', '')
+            change_val = lumbar_change.replace('-', '').replace('+', '').replace('#', '').replace('*', '')
             # Si el valor contiene paréntesis, extraer solo el porcentaje
             if '(' in change_val and ')' in change_val:
                 pct_match = re.search(r'\(([^)]+)\)', change_val)
                 if pct_match:
                     change_val = pct_match.group(1)
-            if '%' not in change_val:
-                change_val = f"{change_val}%"
             # Convertir a float para comparar
             try:
                 change_float = float(change_val.replace('%', ''))
@@ -1362,11 +1240,11 @@ def generate_report(data):
                     lumbar_comparison = f" The bone mineral density in the lumbar spine remained stable since {year}."
                 else:
                     # Determinar si es aumento o disminución
-                    change_text = "decreased" if "-" in str(lumbar_change) else "increased"
+                    change_text = "decreased" if "-" in lumbar_change else "increased"
                     lumbar_comparison = f" The bone mineral density in the lumbar spine [{change_text}] by {change_val} since {year}."
             except ValueError:
                 # Si no se puede convertir, usar lógica antigua
-                change_text = "decreased" if "-" in str(lumbar_change) else "increased"
+                change_text = "decreased" if "-" in lumbar_change else "increased"
                 lumbar_comparison = f" The bone mineral density in the lumbar spine [{change_text}] by {change_val} since {year}."
     
     # Construir texto de comparación histórica general
@@ -1416,7 +1294,7 @@ Comparison: {comparison_text}.
 <strong>FINDINGS:</strong>
 {lumbar_section}{right_forearm_section}{left_forearm_section}{right_hip_section}{left_hip_section}
 {frax_section}<strong>IMPRESSION:</strong>
-{generate_impression(data, hip_side, femoral_neck_only=femoral_neck_only)}
+{generate_impression(data, hip_side)}
 """
     
     return report
@@ -1540,12 +1418,11 @@ def insert_into_database(data, report_text):
             for key, value in existing_data.items():
                 new_value = combined_data.get(key)
                 
-                # Para FRAX "with prior fracture": si el archivo actual no tiene valor, preservar el existente en DB
+                # DESERT: No sobrescribir valores *_prior ya existentes.
+                # En estudios mixtos (mismo ACC) Memorial puede poblar estos campos,
+                # y un update posterior de Desert no debe borrarlos.
                 if key in ['major_fracture_risk_prior', 'hip_fracture_risk_prior']:
-                    if new_value is None or new_value == '':
-                        # Preservar el valor existente de la DB (puede haber sido seteado por un archivo Memorial anterior)
-                        combined_data[key] = value if value is not None else None
-                    # Si tiene valor nuevo, usarlo (ya está en combined_data)
+                    combined_data[key] = str(value) if value is not None else None
                     continue
                 
                 # Si nuevo es None/vacío, usar existente
@@ -1592,26 +1469,14 @@ def insert_into_database(data, report_text):
                     if value is not None and (new_value is None or new_value == ''):
                         combined_data[key] = str(value)
             
-            # MEMORIAL: Si los datos nuevos vienen del archivo dual-hip (Memorial), dar prioridad ABSOLUTA
-            # a los valores de FRAX sobre cualquier archivo individual procesado anteriormente
-            if data.get('_is_memorial_frax'):
-                print(f"   └─ Valores FRAX de Memorial dual-hip detectados - PRIORIZANDO")
-                # Sobreescribir FRAX con los valores del archivo Memorial
-                for frax_key in ['major_fracture_risk', 'hip_fracture_risk', 'major_fracture_risk_prior', 'hip_fracture_risk_prior']:
-                    if data.get(frax_key):
-                        combined_data[frax_key] = data[frax_key]
-                        print(f"      ✓ {frax_key}: {data[frax_key]}")
-            # SINGLE-HIP (Desert o Memorial single-hip): No sobrescribir valores "prior" existentes
-            # Si el archivo actual NO es dual-hip, preservar los valores prior que puedan existir
-            # de un archivo dual-hip procesado anteriormente
+            # DESERT: No hay lógica de priorización Memorial
+            # Todos los archivos son single-hip con igual prioridad
             
             # Asegurar que patient_id y accession_number estén presentes
             combined_data['patient_id'] = mrn
             combined_data['accession_number'] = acc
             
-            # Limpiar campos temporales (flags de control)
-            combined_data.pop('_is_memorial_frax', None)
-            combined_data.pop('_is_memorial_format', None)
+            # DESERT: No hay flags temporales que limpiar
             
             # Preservar lumbar_vertebrae_range: solo sobrescribir si el nuevo valor NO es None
             # Verificar primero en la caché global, luego en data
@@ -1638,8 +1503,8 @@ def insert_into_database(data, report_text):
             # Regenerar reporte con datos combinados
             combined_report = generate_report(combined_data)
             
-            # Guardar reporte como archivo .txt (DESACTIVADO - Solo se guarda en BD)
-            # save_report_to_file(combined_report, mrn, acc)
+            # Guardar reporte como archivo .txt
+            save_report_to_file(combined_report, mrn, acc)
             
             # Función para limpiar y convertir valores con 3 decimales de precisión
             def to_float(val):
@@ -1797,14 +1662,9 @@ def insert_into_database(data, report_text):
             hip_fracture_risk = to_float(data.get('hip_fracture_risk'))
             major_fracture_risk = to_float(data.get('major_fracture_risk'))
             
-            # FRAX "with prior fracture": Solo incluir si es formato Memorial
-            # Para Desert, estos valores son cálculos estándar del equipo, no específicos del paciente
-            if data.get('_is_memorial_format'):
-                major_fracture_risk_prior = to_float(data.get('major_fracture_risk_prior'))
-                hip_fracture_risk_prior = to_float(data.get('hip_fracture_risk_prior'))
-            else:
-                major_fracture_risk_prior = None
-                hip_fracture_risk_prior = None
+            # DESERT: Siempre None para valores "with prior fracture"
+            major_fracture_risk_prior = None
+            hip_fracture_risk_prior = None
             
             # Datos de comparación histórica
             lumbar_prev_date = data.get('lumbar_prev_date')
@@ -1826,8 +1686,8 @@ def insert_into_database(data, report_text):
             # Generar reporte
             report_text = generate_report(data)
             
-            # Guardar reporte como archivo .txt (DESACTIVADO - Solo se guarda en BD)
-            # save_report_to_file(report_text, mrn, acc)
+            # Guardar reporte como archivo .txt
+            save_report_to_file(report_text, mrn, acc)
             
             # INSERT
             cursor.execute("""
@@ -2029,8 +1889,6 @@ if __name__ == "__main__":
             # Verificar si Major FRAX fue extraído del XML
             if data.get('major_fracture_risk'):
                 print(f"    ✓ Major FRAX from XML: {data.get('major_fracture_risk')}")
-                log_bd_processing_local(patient_id, "FRAX_SOURCE", "INFO", 
-                    f"Major FRAX extraído de XML: {data.get('major_fracture_risk')}%")
             else:
                 # Solo intentar OCR si hay JPEG disponible y no se encontró en XML
                 jpeg_base = Path("/home/ubuntu/DICOMReceiver/pixel_extraction/BD") / patient_id
@@ -2041,21 +1899,12 @@ if __name__ == "__main__":
                     if major_frax:
                         data['major_fracture_risk'] = major_frax
                         print(f"    ✓ Extracted from OCR: Major FRAX = {major_frax}%")
-                        log_bd_processing_local(patient_id, "FRAX_SOURCE", "INFO", 
-                            f"Major FRAX extraído via OCR (fallback): {major_frax}%")
-                    else:
-                        log_bd_processing_local(patient_id, "FRAX_SOURCE", "WARNING", 
-                            "Major FRAX no encontrado - OCR sin resultados")
                 else:
                     print(f"    ⚠️  No JPEG available for OCR")
-                    log_bd_processing_local(patient_id, "FRAX_SOURCE", "WARNING", 
-                        "Major FRAX no encontrado - Sin JPEG para OCR")
             
             # Verificar Hip FRAX
             if data.get('hip_fracture_risk'):
                 print(f"    ✓ Hip FRAX from XML: {data.get('hip_fracture_risk')}")
-                log_bd_processing_local(patient_id, "FRAX_SOURCE", "INFO", 
-                    f"Hip FRAX extraído de XML: {data.get('hip_fracture_risk')}%")
             
             # Insert/Update into PostgreSQL (will merge with existing record if any)
             print(f"\n    📊 Guardando en PostgreSQL...")
